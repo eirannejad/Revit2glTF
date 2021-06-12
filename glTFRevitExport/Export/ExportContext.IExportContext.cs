@@ -10,169 +10,15 @@ using GLTFRevitExport.Extensions;
 using GLTFRevitExport.GLTF.Schema;
 using GLTFRevitExport.GLTF.Package;
 using GLTFRevitExport.GLTF.Extensions.BIM;
-using GLTFRevitExport.ExportContext;
-using GLTFRevitExport.ExportContext.BuildActions;
-using GLTFRevitExport.ExportContext.Geometry;
+using GLTFRevitExport.Build;
+using GLTFRevitExport.Build.Actions;
+using GLTFRevitExport.Build.Geometry;
 
-namespace GLTFRevitExport {
-    #region Initialization
-    sealed partial class GLTFExportContext : IExportContext {
-        public GLTFExportContext(Document doc, GLTFExportConfigs exportConfigs = null) {
-            // ensure base configs
-            _cfgs = exportConfigs is null ? new GLTFExportConfigs() : exportConfigs;
-
-            // reset stacks
-            ResetExporter();
-            // place doc on the stack
-            _docStack.Push(doc);
-        }
-
-        private void ResetExporter() {
-            // reset the logger
-            Logger.Reset();
-            _actions.Clear();
-            _processed.Clear();
-            _skipElement = false;
-        }
-    }
-    #endregion
-
-    #region Data Stacks
-    sealed partial class GLTFExportContext : IExportContext {
-        /// <summary>
-        /// Configurations for the active export
-        /// </summary>
-        private readonly GLTFExportConfigs _cfgs = new GLTFExportConfigs();
-
-        /// <summary>
-        /// Document stack to hold the documents being processed.
-        /// A stack is used to allow processing nested documents (linked docs)
-        /// </summary>
-        private readonly Stack<Document> _docStack = new Stack<Document>();
-
-        /// <summary>
-        /// Transform of the embedded document
-        /// </summary>
-        private float[] _linkMatrix = null;
-
-        /// <summary>
-        /// View stack to hold the view being processed.
-        /// A stack is used to allow referencing view when needed.
-        /// It is not expected for this stack to hold more than one view,
-        /// however stack has been used for consistency
-        /// </summary>
-        private readonly Stack<View> _viewStack = new Stack<View>();
-
-        /// <summary>
-        /// Queue of actions collected during export. These actions are then
-        /// played back on each .Build call to create separate glTF outputs
-        /// </summary>
-        private readonly Queue<BaseAction> _actions = new Queue<BaseAction>();
-
-        /// <summary>
-        /// List of processed elements by their unique id
-        /// </summary>
-        private readonly List<string> _processed = new List<string>();
-
-        /// <summary>
-        /// Flag to mark current node as skipped
-        /// </summary>
-        private bool _skipElement = false;
-
-
-        private readonly Stack<PartData> _partStack = new Stack<PartData>();
-
-        private GLTFBIMBounds CalculateBounds(float[] matrix = null) {
-            
-            GLTFBIMBounds CalculateMeshBounds(Transform xform) {
-                float minx, miny, minz, maxx, maxy, maxz;
-                minx = miny = minz = maxx = maxy = maxz = float.NaN;
-
-                foreach (var partData in _partStack)
-                    foreach (var vertex in partData.Primitive.Vertices) {
-                        var vtx = vertex;
-                        if (xform is Transform)
-                            vtx = vtx.Transform(xform);
-
-                        minx = minx is float.NaN || vtx.X < minx ? vtx.X : minx;
-                        miny = miny is float.NaN || vtx.Y < miny ? vtx.Y : miny;
-                        minz = minz is float.NaN || vtx.Z < minz ? vtx.Z : minz;
-                        maxx = maxx is float.NaN || vtx.X > maxx ? vtx.X : maxx;
-                        maxy = maxy is float.NaN || vtx.Y > maxy ? vtx.Y : maxy;
-                        maxz = maxz is float.NaN || vtx.Z > maxz ? vtx.Z : maxz;
-                    }
-
-                return new GLTFBIMBounds(
-                    minx, miny, minz,
-                    maxx, maxy, maxz
-                );
-            };
-
-            Transform mxform = null;
-            if (matrix != null)
-                mxform = matrix.FromGLTFMatrix();
-
-            // if link matrix is available we are processing mesh in a link
-            // therefore .LinkHostBounds must be set on the calculated bounds
-            GLTFBIMBounds linkHostBounds = null;
-            if (_linkMatrix != null) {
-                var lxform = _linkMatrix.FromGLTFMatrix();
-                if (mxform != null)
-                    lxform = lxform.Multiply(mxform);
-                linkHostBounds = CalculateMeshBounds(lxform);
-                if (_cfgs.EmbedLinkedModels)
-                    return linkHostBounds;
-            }
-
-            GLTFBIMBounds finalBounds;
-            if (mxform != null)
-                finalBounds = CalculateMeshBounds(mxform);
-            else
-                finalBounds = CalculateMeshBounds(null);
-
-            finalBounds.LinkHostBounds = linkHostBounds;
-            return finalBounds;
-        }
-
-        private float[] LocalizePartStack() {
-            List<float> vx = new List<float>();
-            List<float> vy = new List<float>();
-            List<float> vz = new List<float>();
-
-            foreach (var partData in _partStack)
-                foreach (var vtx in partData.Primitive.Vertices) {
-                    vx.Add(vtx.X);
-                    vy.Add(vtx.Y);
-                    vz.Add(vtx.Z);
-                }
-
-            var min = new VectorData(vx.Min(), vy.Min(), vz.Min());
-            var max = new VectorData(vx.Max(), vy.Max(), vz.Max());
-            var anchor = min + ((max - min) / 2f);
-            var translate = new VectorData(0, 0, 0) - anchor;
-
-            foreach (var partData in _partStack)
-                foreach (var vtx in partData.Primitive.Vertices) {
-                    vtx.X += translate.X;
-                    vtx.Y += translate.Y;
-                    vtx.Z += translate.Z;
-                }
-
-            return new float[16] {
-                1f,             0f,             0f,             0f,
-                0f,             1f,             0f,             0f,
-                0f,             0f,             1f,             0f,
-                -translate.X,   -translate.Y,   -translate.Z,    1f
-            };
-        }
-    }
-    #endregion
-
-    #region IExportContext Implementation
+namespace GLTFRevitExport.Export {
 #if REVIT2019
     sealed partial class GLTFExportContext : IExportContext, IModelExportContext {
 #else
-    sealed partial class GLTFExportContext : IExportContext, IExportContextBase, IModelExportContext {
+    sealed partial class ExportContext : IExportContext, IExportContextBase, IModelExportContext {
 #endif
         #region Start, Stop, Cancel
         // Runs once at beginning of export. Sets up the root node
@@ -242,7 +88,7 @@ namespace GLTFRevitExport {
             return RenderNodeAction.Skip;
         }
 
-        private void QueueLevelActions(Document doc, View view) {
+        void QueueLevelActions(Document doc, View view) {
             Logger.Log("> collecting levels");
 
             // collect levels from project or view only?
@@ -254,9 +100,9 @@ namespace GLTFRevitExport {
                     );
         }
 
-        private void QueueGridActions(Document doc) {
+        void QueueGridActions(Document doc) {
             Logger.Log("> collecting grids");
-            
+
             // first collect the multisegment grids and record their children
             // multi-segment grids are not supported and the segments will not
             // be procesed as grids
@@ -273,7 +119,7 @@ namespace GLTFRevitExport {
                     _actions.Enqueue(new GridAction(element: e));
         }
 
-        private void QueuePartFromElementActions(Document doc, View view, ElementFilter filter) {
+        void QueuePartFromElementActions(Document doc, View view, ElementFilter filter) {
             foreach (var e in new FilteredElementCollector(view.Document, view.Id).WherePasses(filter))
                 _actions.Enqueue(new PartFromElementAction(view: view, element: e));
         }
@@ -393,8 +239,8 @@ namespace GLTFRevitExport {
                 // if has mesh data
                 if (_partStack.Count > 0) {
                     // calculate the bounding box from the parts data
-                    GLTFBIMBounds bounds;
-                    switch(_actions.Last()) {
+                    glTFBIMBounds bounds;
+                    switch (_actions.Last()) {
                         // when element is a Revit family instance
                         case ElementTransformAction etAction:
                             // transform bounds with existing transform
@@ -414,7 +260,7 @@ namespace GLTFRevitExport {
                     }
 
                     _actions.Enqueue(new ElementBoundsAction(bounds));
-                    
+
                     foreach (var partData in _partStack)
                         _actions.Enqueue(new PartFromDataAction(partData));
                 }
@@ -479,7 +325,7 @@ namespace GLTFRevitExport {
                 _skipElement = false;
             else {
                 if (_cfgs.ExportLinkedModels) {
-                    
+
                     Logger.Log("> transform (link)");
                     float[] matrix = node.GetTransform().ToGLTF();
                     _actions.Enqueue(new LinkTransformAction(matrix));
@@ -643,212 +489,4 @@ namespace GLTFRevitExport {
         //}
         #endregion
     }
-    #endregion
-
-    #region Build
-    sealed partial class GLTFExportContext : IExportContext {
-        public List<GLTFPackageItem> Build(ElementFilter filter,
-                                           Func<object, string[]> zoneFinder,
-                                           Func<object, glTFExtras> extrasBuilder,
-                                           GLTFBuildConfigs buildConfigs = null) {
-            // ensure configs
-            buildConfigs = buildConfigs ?? new GLTFBuildConfigs();
-
-            // build asset info
-            var doc = _docStack.Last();
-
-            // create main gltf builder
-            var mainCtx = new BuildContext("model", doc, _cfgs, extrasBuilder);
-            var buildContexts = new List<BuildContext> { mainCtx };
-
-            // combine default filter with build filter
-            ElementFilter actionFilter = null;
-            if (filter != null) {
-                actionFilter = new LogicalOrFilter(
-                    new List<ElementFilter> {
-                        // always include these categories no matter the build filter
-                        new ElementMulticategoryFilter(
-                            new List<BuiltInCategory> {
-                                BuiltInCategory.OST_RvtLinks,
-                                BuiltInCategory.OST_Views,
-                            }
-                        ),
-                        filter
-                    }
-                );
-            }
-
-            Logger.Log("+ start build");
-
-            // filter and process each action
-            // the loop tests each BEGIN action with a filter
-            // and needs to remember the result of the filter test
-            // so it knows whether to run the corresponding END action or not
-            var passResults = new Stack<bool>();
-            BuildContext currentCtx = mainCtx;
-            BuildContext activeLinkCtx = null;
-            foreach (var action in _actions) {
-                action.AssetExt = currentCtx.AssetExtension;
-
-                action.IncludeHierarchy = _cfgs.ExportHierarchy;
-                action.IncludeProperties = _cfgs.ExportParameters;
-                // set the property source for the action if needed
-                if (!_cfgs.EmbedParameters)
-                    action.PropertyContainer = currentCtx.PropertyContainer;
-
-                if (!_cfgs.EmbedLinkedModels) {
-                    if (action is LinkBeginAction linkBeg) {
-                        linkBeg.Uri = $"{linkBeg.LinkId}.gltf";
-                    }
-                    else if (activeLinkCtx != null) {
-                        // Note:
-                        // LinkEndAction should be always preceded by ElementTransformAction
-                        // switch to main builder. We need to switch to main builder on 
-                        // ElementTransformAction to apply the correct transform
-                        // to the link instance node in the main builder
-                        if (action is LinkTransformAction) {
-                            // switch to main builder
-                            currentCtx = mainCtx;
-                        }
-                        else if (action is LinkBoundsAction lbAction) {
-                            // grab the bounds from the build
-                            GLTFBIMBounds bounds = null;
-                            for (uint idx = 0; idx < activeLinkCtx.Builder.NodeCount; idx++) {
-                                var node = activeLinkCtx.Builder.GetNode(idx);
-                                if (node.Extensions != null)
-                                    foreach (var ext in node.Extensions)
-                                        if (ext.Value is GLTFBIMNodeExtension nodeExt)
-                                            if (nodeExt.Bounds != null && nodeExt.Bounds.LinkHostBounds != null) {
-                                                if (bounds is null)
-                                                    bounds = new GLTFBIMBounds(nodeExt.Bounds.LinkHostBounds);
-                                                else
-                                                    bounds.Union(nodeExt.Bounds.LinkHostBounds);
-                                            }
-                            }
-                            lbAction.Bounds = bounds;
-                        }
-                        // close the link builder
-                        else if (action is LinkEndAction) {
-                            // close the link
-                            activeLinkCtx.Builder.CloseScene();
-                            buildContexts.Add(activeLinkCtx);
-                            // switch to main builder
-                            activeLinkCtx = null;
-                            currentCtx = mainCtx;
-                        }
-                    }
-                }
-
-                switch (action) {
-                    case BuildBeginAction beg:
-                        if (actionFilter is null) {
-                            if (extrasBuilder != null)
-                                beg.Execute(currentCtx.Builder, _cfgs, zoneFinder, extrasBuilder);
-                            else
-                                beg.Execute(currentCtx.Builder, _cfgs);
-                            passResults.Push(true);
-                        }
-                        else if (beg.Passes(actionFilter)) {
-                            if (extrasBuilder != null)
-                                beg.Execute(currentCtx.Builder, _cfgs, zoneFinder, extrasBuilder);
-                            else
-                                beg.Execute(currentCtx.Builder, _cfgs);
-                            passResults.Push(true);
-                        }
-                        else
-                            passResults.Push(false);
-                        break;
-
-                    case BuildEndAction end:
-                        if (passResults.Pop())
-                            end.Execute(currentCtx.Builder, _cfgs);
-                        break;
-
-                    case BaseAction ea:
-                        ea.Execute(currentCtx.Builder, _cfgs);
-                        break;
-                }
-
-                // use this link builder for the rest of actions
-                // that happen inside the link
-                if (!_cfgs.EmbedLinkedModels)
-                    if (action is LinkBeginAction linkBeg) {
-                        // create a new glTF for this link
-                        activeLinkCtx = new BuildContext(
-                            name: linkBeg.LinkId,
-                            doc: linkBeg.LinkDocument,
-                            exportCfgs: _cfgs,
-                            extrasBuilder: extrasBuilder
-                        );
-
-                        activeLinkCtx.Builder.OpenScene(name: "default", exts: null, extras: null);
-
-                        // use this builder for all subsequent elements
-                        currentCtx = activeLinkCtx;
-                    }
-            }
-
-            Logger.Log("- end build");
-
-            Logger.Log("+ start pack");
-
-            // prepare pack
-            var gltfPack = new List<GLTFPackageItem>();
-
-            foreach (var buildCtx in buildContexts) {
-#if DEBUG
-                for (uint idx = 0; idx < buildCtx.Builder.NodeCount; idx++) {
-                    if (buildCtx.Builder.GetNode(idx) is glTFNode node)
-                        if (node.Extensions != null)
-                            foreach (var ext in node.Extensions)
-                                if (ext.Value is GLTFBIMNodeExtension nodeExt)
-                                    if (nodeExt.Bounds != null) {
-                                        // RE: script/bbox_preview.gh
-                                        var b = nodeExt.Bounds;
-                                        if (b != null && Environment.GetEnvironmentVariable("ARGYLEBBOXFILE") is string bboxPointsFile) {
-                                            File.AppendAllText(
-                                                bboxPointsFile,
-                                                $"{node.Name ?? "?"},{b.Min.X},{b.Min.Y},{b.Min.Z},{b.Max.X},{b.Max.Y},{b.Max.Z}\n"
-                                                );
-                                        }
-                                    }
-                }
-#endif
-
-                gltfPack.AddRange(buildCtx.Pack(buildConfigs));
-            }
-
-            Logger.Log("- end pack");
-
-            return gltfPack;
-        }
-    }
-    #endregion
-
-    #region Utility Methods
-    sealed partial class GLTFExportContext : IExportContext {
-        /// <summary>
-        /// Determine if given element should be skipped
-        /// </summary>
-        /// <param name="e">Target element</param>
-        /// <returns>True if element should be skipped</returns>
-        private bool RecordOrSkip(Element e, string skipMessage, bool setFlag = false) {
-            bool skip = false;
-            if (e is null) {
-                Logger.Log(skipMessage);
-                skip = true;
-            }
-            else if (e != null && _processed.Contains(e.GetId())) {
-                Logger.LogElement(skipMessage, e);
-                skip = true;
-            }
-            else
-                _processed.Add(e.GetId());
-
-            if (setFlag)
-                _skipElement = skip;
-            return skip;
-        }
-    }
-    #endregion
 }

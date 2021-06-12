@@ -1,4 +1,6 @@
-﻿namespace GLTFRevitExport.GLTF.Package {
+﻿using GLTFRevitExport.GLTF.Package.BaseTypes;
+
+namespace GLTFRevitExport.GLTF.Package {
     public class GLTFPackageBinaryItem : GLTFPackageItem {
         public GLTFPackageBinaryItem(string uri, byte[] binaryData) {
             Uri = uri;

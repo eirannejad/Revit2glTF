@@ -1,6 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 
-namespace GLTFRevitExport.ExportContext.Geometry {
+namespace GLTFRevitExport.Build.Geometry {
     class FacetData {
         public uint V1 { get; set; }
         public uint V2 { get; set; }

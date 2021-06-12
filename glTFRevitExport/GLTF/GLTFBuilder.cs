@@ -8,12 +8,11 @@ using GLTFRevitExport.GLTF.Schema;
 using GLTFRevitExport.Properties;
 using GLTFRevitExport.GLTF.BufferSegments;
 using GLTFRevitExport.GLTF.Package;
+using GLTFRevitExport.GLTF.Package.BaseTypes;
+using GLTFRevitExport.GLTF.BufferSegments.BaseTypes;
 
 namespace GLTFRevitExport.GLTF {
-    #region Initialization, Completion
     sealed partial class GLTFBuilder {
-        private string _name;
-
         public GLTFBuilder(string name) {
             _name = name;
             _gltf = new glTF();
@@ -22,7 +21,6 @@ namespace GLTFRevitExport.GLTF {
         /// <summary>
         /// Pack the constructed glTF data into a container
         /// </summary>
-        /// <returns></returns>
         public List<GLTFPackageItem> Pack(bool singleBinary = true) {
             // TODO: Add glb option
             // create a gltf bundle
@@ -30,7 +28,7 @@ namespace GLTFRevitExport.GLTF {
 
             // add the buffers to the gltf and to the bundle
             List<byte> bufferBytes = new List<byte>();
-            
+
             if (singleBinary) {
                 uint bufferIndex = 0;
                 foreach (var seg in _bufferSegments) {
@@ -107,24 +105,10 @@ namespace GLTFRevitExport.GLTF {
 
             // finally add glTF model to the bundle
             bundleItems.Add(model);
-            
+
             return bundleItems;
         }
-    }
-    #endregion
 
-    #region Data stacks
-    sealed partial class GLTFBuilder {
-        private readonly glTF _gltf = null;
-
-        private readonly List<GLTFBufferSegment> _bufferSegments = new List<GLTFBufferSegment>();
-        private readonly Queue<glTFMeshPrimitive> _primQueue = new Queue<glTFMeshPrimitive>();
-    }
-
-    #endregion
-
-    #region Builders
-    sealed partial class GLTFBuilder {
         #region Asset
         public void SetAsset(string generatorId, string copyright,
                              glTFExtension[] exts, glTFExtras extras) {
@@ -153,7 +137,6 @@ namespace GLTFRevitExport.GLTF {
         #endregion
 
         #region Scenes
-
         public uint SceneCount => (uint)_gltf.Scenes.Count;
 
         public uint OpenScene(string name,
@@ -178,7 +161,6 @@ namespace GLTFRevitExport.GLTF {
         }
 
         public void CloseScene() { }
-
         #endregion
 
         #region Nodes
@@ -279,11 +261,9 @@ namespace GLTFRevitExport.GLTF {
                 _primQueue.Clear();
             }
         }
-
         #endregion
 
         #region Node Mesh
-
         public uint AddPrimitive(float[] vertices, float[] normals, uint[] faces) {
             // ensure vertex and face data is available
             if (vertices is null || faces is null)
@@ -291,7 +271,7 @@ namespace GLTFRevitExport.GLTF {
 
             if (PeekNode() is glTFNode) {
                 // process vertex data
-                var vertexBuffer = new GLTFBufferVectorSegment(vertices);
+                var vertexBuffer = new BufferVectorSegment(vertices);
                 var vBuffIdx = _bufferSegments.IndexOf(vertexBuffer);
                 if (vBuffIdx < 0) {
                     _bufferSegments.Add(vertexBuffer);
@@ -301,7 +281,7 @@ namespace GLTFRevitExport.GLTF {
                 // process normal data if available
                 int nBuffIdx = -1;
                 if (normals != null) {
-                    var normalBuffer = new GLTFBufferVectorSegment(normals);
+                    var normalBuffer = new BufferVectorSegment(normals);
                     nBuffIdx = _bufferSegments.IndexOf(normalBuffer);
                     if (nBuffIdx < 0) {
                         _bufferSegments.Add(normalBuffer);
@@ -311,21 +291,21 @@ namespace GLTFRevitExport.GLTF {
 
                 // process face data
                 uint maxIndex = faces.Max();
-                GLTFBufferSegment faceBuffer;
+                BufferSegment faceBuffer;
                 if (maxIndex < 0xFF) {
                     var byteFaces = new List<byte>();
                     foreach (var face in faces)
                         byteFaces.Add(Convert.ToByte(face));
-                    faceBuffer = new GLTFBufferScalar1Segment(byteFaces.ToArray());
+                    faceBuffer = new BufferScalar1Segment(byteFaces.ToArray());
                 }
                 else if (maxIndex < 0xFFFF) {
                     var shortFaces = new List<ushort>();
                     foreach (var face in faces)
                         shortFaces.Add(Convert.ToUInt16(face));
-                    faceBuffer = new GLTFBufferScalar2Segment(shortFaces.ToArray());
+                    faceBuffer = new BufferScalar2Segment(shortFaces.ToArray());
                 }
                 else {
-                    faceBuffer = new GLTFBufferScalar4Segment(faces);
+                    faceBuffer = new BufferScalar4Segment(faces);
                 }
 
                 var fBuffIdx = _bufferSegments.IndexOf(faceBuffer);
@@ -404,22 +384,6 @@ namespace GLTFRevitExport.GLTF {
             else
                 throw new Exception(StringLib.NoParentNode);
         }
-
         #endregion
     }
-    #endregion
-
-    #region Privates
-    sealed partial class GLTFBuilder {
-        private uint AppendNodeToScene(uint idx) {
-            if (PeekScene() is glTFScene scene) {
-                if (!_gltf.Nodes.IsOpen())
-                    scene.Nodes.Add(idx);
-                return idx;
-            }
-            else
-                throw new Exception(StringLib.NoParentScene);
-        }
-    }
 }
-#endregion

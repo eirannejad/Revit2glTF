@@ -10,8 +10,8 @@ using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM {
     [Serializable]
-    class GLTFBIMAssetExtension : GLTFBIMExtension {
-        public GLTFBIMAssetExtension(Document d, bool includeParameters = true, GLTFBIMPropertyContainer propContainer = null) : base() {
+    class glTFBIMAssetExtension : glTFBIMExtension {
+        public glTFBIMAssetExtension(Document d, bool includeParameters = true, glTFBIMPropertyContainer propContainer = null) : base() {
             App = GetAppName(d);
             Id = GetDocumentId(d).ToString();
             Title = d.Title;
@@ -25,7 +25,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
                     propContainer.Record(Id, GetProjectInfo(d));
                     // ensure property sources list is initialized
                     if (Containers is null)
-                        Containers = new List<GLTFBIMPropertyContainer>();
+                        Containers = new List<glTFBIMPropertyContainer>();
                     // add the new property source
                     if (!Containers.Contains(propContainer))
                         Containers.Add(propContainer);
@@ -33,20 +33,20 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
             }
         }
 
-        private static string GetAppName(Document doc) {
+        static string GetAppName(Document doc) {
             var app = doc.Application;
             var hostName = app.VersionName;
             hostName = hostName.Replace(app.VersionNumber, app.SubVersionNumber);
             return $"{hostName} {app.VersionBuild}";
         }
 
-        private static Guid GetDocumentId(Document doc) {
+        static Guid GetDocumentId(Document doc) {
             if (doc?.IsValidObject != true)
                 return Guid.Empty;
             return ExportUtils.GetGBXMLDocumentId(doc);
         }
 
-        private static Dictionary<string, object> GetProjectInfo(Document doc) {
+        static Dictionary<string, object> GetProjectInfo(Document doc) {
             var docProps = new Dictionary<string, object>();
             if (doc != null) {
                 var pinfo = doc.ProjectInformation;
@@ -99,11 +99,8 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
         [JsonProperty("grids")]
         public List<uint> Grids { get; set; }
 
-        [JsonProperty("zones")]
-        public List<uint> Zones { get; set; }
-
         [JsonProperty("containers")]
-        public List<GLTFBIMPropertyContainer> Containers { get; set; }
+        public List<glTFBIMPropertyContainer> Containers { get; set; }
 
         [JsonProperty("properties")]
         public Dictionary<string, object> Properties { get; set; }

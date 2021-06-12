@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.Properties;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Package;
-using GLTFRevitExport.ExportContext;
+using GLTFRevitExport.GLTF.Package.BaseTypes;
+using GLTFRevitExport.Export;
 
 namespace GLTFRevitExport {
     public class GLTFExporter {
-        private readonly GLTFExportContext _ctx = null;
+        readonly ExportContext _ctx = null;
 
         public GLTFExporter(Document doc, GLTFExportConfigs configs = null)
-            => _ctx = new GLTFExportContext(doc, configs ?? new GLTFExportConfigs());
+            => _ctx = new ExportContext(doc, configs ?? new GLTFExportConfigs());
 
         public void ExportView(View view, ElementFilter filter = null) {
 
@@ -52,10 +49,7 @@ namespace GLTFRevitExport {
             //view.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
         }
 
-        public List<GLTFPackageItem> BuildGLTF(ElementFilter filter = null,
-                                              Func<object, string[]> zoneFinder = null,
-                                              Func<object, glTFExtras> extrasBuilder = null,
-                                              GLTFBuildConfigs configs = null)
-            => _ctx.Build(filter, zoneFinder, extrasBuilder, configs);
+        public List<GLTFPackageItem> BuildGLTF(ElementFilter filter = null)
+            => _ctx.Build(filter);
     }
 }

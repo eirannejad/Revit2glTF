@@ -4,7 +4,7 @@ using Autodesk.Revit.DB;
 
 using GLTFRevitExport.Extensions;
 
-namespace GLTFRevitExport.ExportContext.Geometry {
+namespace GLTFRevitExport.Build.Geometry {
     class VectorData : IComparable<VectorData> {
         public float X { get; set; }
         public float Y { get; set; }

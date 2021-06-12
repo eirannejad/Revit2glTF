@@ -9,22 +9,11 @@ using Autodesk.Revit.DB;
 using GLTFRevitExport.Extensions;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
-    [AttributeUsage(AttributeTargets.Property)]
-    class RevitBuiltinParametersAttribute : Attribute {
-        public BuiltInParameter TypeParam { get; private set; }
-        public BuiltInParameter InstanceParam { get; private set; }
-
-        public RevitBuiltinParametersAttribute(BuiltInParameter typeParam, BuiltInParameter instParam) {
-            TypeParam = typeParam;
-            InstanceParam = instParam;
-        }
-    }
-
     [Serializable]
-    abstract class GLTFBIMPropertyExtension : GLTFBIMExtension {
-        private const string _revitPrefix = "Revit";
+    abstract class glTFBIMPropertyExtension : glTFBIMExtension {
+        const string _revitPrefix = "Revit";
 
-        private readonly BuiltInParameter[] excludeBuiltinParams =
+        readonly BuiltInParameter[] excludeBuiltinParams =
             Enum.GetNames(typeof(BuiltInParameter))
                 .Where(x =>
                     x.Contains("_NAME")
@@ -37,7 +26,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
                 .Select(x => (BuiltInParameter)Enum.Parse(typeof(BuiltInParameter), x))
                 .ToArray();
 
-        public GLTFBIMPropertyExtension(Element e, bool includeParameters = true, GLTFBIMPropertyContainer propContainer = null) {
+        public glTFBIMPropertyExtension(Element e, bool includeParameters = true, glTFBIMPropertyContainer propContainer = null) {
             // identity data
             Id = e.GetId();
             Taxonomies = GetTaxonomies(e);
@@ -54,7 +43,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             }
         }
 
-        private Dictionary<string, object> GetProperties(Element e) {
+        Dictionary<string, object> GetProperties(Element e) {
             // exclude list for parameters that are processed by this
             // constructor and should not be included in 'this.Properties'
             var excludeParams = new List<BuiltInParameter>(excludeBuiltinParams);
@@ -87,7 +76,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             return GetParamValues(e, exclude: excludeParams);
         }
 
-        private List<string> GetTaxonomies(Element e) {
+        List<string> GetTaxonomies(Element e) {
             var taxonomies = new List<string>();
             // types show the hierarchical structure of data (vertical)
             if (e is ElementType et) {
@@ -158,7 +147,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             return taxonomies;
         }
 
-        private List<string> GetClasses(Element e) {
+        List<string> GetClasses(Element e) {
             var classes = new List<string>();
             // TODO: get correct uniformat category
             classes.Add(
@@ -186,7 +175,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
         /// Return a dictionary of all the given 
         /// element parameter names and values.
         /// </summary>
-        private Dictionary<string, object> GetParamValues(Element e, List<BuiltInParameter> exclude = null) {
+        Dictionary<string, object> GetParamValues(Element e, List<BuiltInParameter> exclude = null) {
             // private function to find a parameter in a list of builins
             bool containsParameter(List<BuiltInParameter> paramList, Parameter param) {
                 if (param.Definition is InternalDefinition paramDef)
@@ -217,7 +206,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             return paramData;
         }
 
-        private object GetParamValue(Element e, BuiltInParameter p) {
+        object GetParamValue(Element e, BuiltInParameter p) {
             if (e.get_Parameter(p) is Parameter param)
                 return param.ToGLTF();
             return null;

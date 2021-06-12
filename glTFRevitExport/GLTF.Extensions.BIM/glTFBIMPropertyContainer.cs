@@ -7,11 +7,11 @@ using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM {
     [Serializable]
-    class GLTFBIMPropertyContainer : GLTFBIMContainer {
-        private string _uri;
-        private GLTFBIMPropertyData _propData = new GLTFBIMPropertyData();
+    class glTFBIMPropertyContainer : glTFBIMContainer {
+        string _uri;
+        GLTFBIMPropertyData _propData = new GLTFBIMPropertyData();
 
-        public GLTFBIMPropertyContainer(string uri) {
+        public glTFBIMPropertyContainer(string uri) {
             _uri = uri;
         }
 

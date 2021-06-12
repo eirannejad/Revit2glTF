@@ -9,7 +9,7 @@ using GLTFRevitExport.Extensions;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
     [Serializable]
-    abstract class GLTFBIMContainer {
+    abstract class glTFBIMContainer {
         [JsonProperty("$type")]
         public abstract string Type { get; }
 

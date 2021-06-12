@@ -11,8 +11,8 @@ namespace GLTFRevitExport.GLTF.Schema {
     /// 
     /// </summary>
     class glTFNodes : IEnumerable<glTFNode> {
-        private readonly List<glTFNode> _items = new List<glTFNode>();
-        private readonly Stack<glTFNode> _openItems = new Stack<glTFNode>();
+        readonly List<glTFNode> _items = new List<glTFNode>();
+        readonly Stack<glTFNode> _openItems = new Stack<glTFNode>();
 
         public glTFNode this[uint index] => _items[(int)index];
 
@@ -60,21 +60,12 @@ namespace GLTFRevitExport.GLTF.Schema {
     }
 
     class glTFNodesEnum : IEnumerator<glTFNode> {
-        private glTFNode[] _items;
-        private int position = -1;
+        glTFNode[] _items;
+        int position = -1;
 
         public glTFNodesEnum(List<glTFNode> items) => _items = items.ToArray();
 
-        public glTFNode Current {
-            get {
-                try {
-                    return _items[position];
-                }
-                catch (IndexOutOfRangeException) {
-                    throw new InvalidOperationException();
-                }
-            }
-        }
+        public glTFNode Current => _items[position];
 
         object IEnumerator.Current => Current;
 
