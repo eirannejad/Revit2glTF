@@ -3,12 +3,9 @@ using System.Collections.Generic;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
-using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
 using GLTFRevitExport.GLTF.Extensions.BIM;
 
-namespace GLTFRevitExport.ExportContext.BuildActions {
+namespace GLTFRevitExport.Build.Actions {
     class LinkBeginAction : ElementBeginAction {
         public Document LinkDocument { get; private set; }
         public string LinkId { get; private set; }
@@ -27,7 +24,7 @@ namespace GLTFRevitExport.ExportContext.BuildActions {
     class LinkBoundsAction : ElementBoundsAction {
         public LinkBoundsAction() : base(null) { }
 
-        public GLTFBIMBounds Bounds {
+        public glTFBIMBounds Bounds {
             get => _bounds;
             set => _bounds = value;
         }

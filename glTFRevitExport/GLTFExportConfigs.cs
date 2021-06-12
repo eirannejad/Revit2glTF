@@ -2,6 +2,8 @@
 using System.Threading;
 using Autodesk.Revit.DB;
 
+using GLTFRevitExport.GLTF.Schema;
+using GLTFRevitExport.Extensions;
 using GLTFRevitExport.Properties;
 
 namespace GLTFRevitExport {
@@ -55,5 +57,20 @@ namespace GLTFRevitExport {
         public CancellationToken CancelToken;
 
         public Color DefaultColor = new Color(255, 255, 255);
+
+        /// <summary>
+        /// Export all buffers into a single binary file
+        /// </summary>
+        public bool UseSingleBinary { get; set; } = true;
+
+        public ElementFilter Filter { get; set; }
+
+        public delegate glTFExtras GLTFExtrasBuilder(object node);
+        public GLTFExtrasBuilder ExtrasBuilder;
+
+        public bool HasExtrasBuilder => ExtrasBuilder != null;
+
+        internal glTFExtras BuildExtras(object node)
+            => ExtrasBuilder?.Invoke(node);
     }
 }

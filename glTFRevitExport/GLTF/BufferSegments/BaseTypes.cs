@@ -4,8 +4,8 @@ using System.Text;
 
 using GLTFRevitExport.GLTF.Schema;
 
-namespace GLTFRevitExport.GLTF.BufferSegments {
-    abstract class GLTFBufferSegment {
+namespace GLTFRevitExport.GLTF.BufferSegments.BaseTypes {
+    abstract class BufferSegment {
         public abstract glTFAccessorType Type { get; }
         public abstract glTFAccessorComponentType DataType { get; }
         public abstract glTFBufferViewTargets Target { get; }
@@ -16,8 +16,8 @@ namespace GLTFRevitExport.GLTF.BufferSegments {
         public abstract object[] Max { get; }
     }
 
-    abstract class GLTFBufferSegment<T> : GLTFBufferSegment {
-        private string _hash = null;
+    abstract class BufferSegment<T> : BufferSegment {
+        string _hash = null;
         public T[] Data;
         protected T[] _min;
         protected T[] _max;
@@ -40,14 +40,14 @@ namespace GLTFRevitExport.GLTF.BufferSegments {
         public override uint Count => (uint)Data.Length;
 
         public override bool Equals(object obj) {
-            if (obj is GLTFBufferSegment<T> other)
+            if (obj is BufferSegment<T> other)
                 return ComputeHash() == other.ComputeHash();
             return false;
         }
 
         public override int GetHashCode() => base.GetHashCode();
 
-        private string ComputeHash() {
+        string ComputeHash() {
             if (_hash is null)
                 _hash = Encoding.UTF8.GetString(
                     SHA256.Create().ComputeHash(ToByteArray())

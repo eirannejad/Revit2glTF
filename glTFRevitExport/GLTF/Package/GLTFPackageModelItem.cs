@@ -1,4 +1,6 @@
-﻿namespace GLTFRevitExport.GLTF.Package {
+﻿using GLTFRevitExport.GLTF.Package.BaseTypes;
+
+namespace GLTFRevitExport.GLTF.Package {
     public class GLTFPackageModelItem : GLTFPackageJsonItem {
         public GLTFPackageModelItem(string uri, string modelData)
             : base(uri, modelData) { }

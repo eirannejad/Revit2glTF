@@ -9,10 +9,10 @@ using Autodesk.Revit.DB;
 using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM {
-    class GLTFBIMMaterialExtensions : GLTFBIMPropertyExtension {
-        public GLTFBIMMaterialExtensions(Element e,
+    class glTFBIMMaterialExtensions : glTFBIMPropertyExtension {
+        public glTFBIMMaterialExtensions(Element e,
                                          bool includeParameters,
-                                         GLTFBIMPropertyContainer propContainer)
+                                         glTFBIMPropertyContainer propContainer)
             : base(e, includeParameters, propContainer) { }
     }
 }

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 using GLTFRevitExport.GLTF.Schema;
+using GLTFRevitExport.GLTF.BufferSegments.BaseTypes;
 using GLTFRevitExport.Properties;
 
 namespace GLTFRevitExport.GLTF.BufferSegments {
-    class GLTFBufferVectorSegment : GLTFBufferSegment<float> {
+    class BufferVectorSegment : BufferSegment<float> {
         public override glTFAccessorType Type => glTFAccessorType.VEC3;
         public override glTFAccessorComponentType DataType => glTFAccessorComponentType.FLOAT;
         public override glTFBufferViewTargets Target => glTFBufferViewTargets.ARRAY_BUFFER;
 
-        public GLTFBufferVectorSegment(float[] vectors) {
+        public BufferVectorSegment(float[] vectors) {
             if (vectors.Length % 3 != 0)
                 throw new Exception(StringLib.ArrayIsNotVector3Data);
             Data = vectors;
@@ -27,7 +28,7 @@ namespace GLTFRevitExport.GLTF.BufferSegments {
             return byteArray;
         }
 
-        private void SetBounds(float[] vectors) {
+        void SetBounds(float[] vectors) {
             // TODO: improve logic and performance
             List<float> vx = new List<float>();
             List<float> vy = new List<float>();

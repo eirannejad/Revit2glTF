@@ -1,4 +1,6 @@
-﻿namespace GLTFRevitExport.GLTF.Package {
+﻿using GLTFRevitExport.GLTF.Package.BaseTypes;
+
+namespace GLTFRevitExport.GLTF.Package {
     public class GLTFPackageJsonItem : GLTFPackageItem {
         public GLTFPackageJsonItem(string uri, string jsonData) {
             Uri = uri;

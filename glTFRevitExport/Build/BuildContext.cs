@@ -7,39 +7,40 @@ using GLTFRevitExport.GLTF;
 using GLTFRevitExport.GLTF.Schema;
 using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.GLTF.Package;
+using GLTFRevitExport.GLTF.Package.BaseTypes;
 
-namespace GLTFRevitExport.ExportContext {
+namespace GLTFRevitExport.Build {
     class BuildContext {
         public GLTFBuilder Builder { get; private set; }
-        public GLTFBIMAssetExtension AssetExtension { get; private set; }
-        public GLTFBIMPropertyContainer PropertyContainer { get; private set; }
+        public glTFBIMAssetExtension AssetExtension { get; private set; }
+        public glTFBIMPropertyContainer PropertyContainer { get; private set; }
 
-        public BuildContext(string name, Document doc, GLTFExportConfigs exportCfgs, Func<object, glTFExtras> extrasBuilder) {
+        public BuildContext(string name, Document doc, GLTFExportConfigs cfgs) {
             // create main gltf builder
             Builder = new GLTFBuilder(name);
 
             // build asset extension and property source (if needed)
-            if (exportCfgs.EmbedParameters)
-                AssetExtension = new GLTFBIMAssetExtension(doc, exportCfgs.ExportParameters);
+            if (cfgs.EmbedParameters)
+                AssetExtension = new glTFBIMAssetExtension(doc, cfgs.ExportParameters);
             else {
-                PropertyContainer = new GLTFBIMPropertyContainer($"{name}-properties.json");
-                AssetExtension = new GLTFBIMAssetExtension(doc, exportCfgs.ExportParameters, PropertyContainer);
+                PropertyContainer = new glTFBIMPropertyContainer($"{name}-properties.json");
+                AssetExtension = new glTFBIMAssetExtension(doc, cfgs.ExportParameters, PropertyContainer);
             }
 
             Builder.SetAsset(
-                generatorId: exportCfgs.GeneratorId,
-                copyright: exportCfgs.CopyrightMessage,
+                generatorId: cfgs.GeneratorId,
+                copyright: cfgs.CopyrightMessage,
                 exts: new glTFExtension[] { AssetExtension },
-                extras: extrasBuilder != null ? extrasBuilder(doc) : null
+                extras: cfgs.BuildExtras(doc)
             );
         }
 
-        public List<GLTFPackageItem> Pack(GLTFBuildConfigs configs) {
+        public List<GLTFPackageItem> Pack(GLTFExportConfigs cfgs) {
             var gltfPack = new List<GLTFPackageItem>();
 
             // pack the glTF data and get the container
             gltfPack.AddRange(
-                Builder.Pack(singleBinary: configs.UseSingleBinary)
+                Builder.Pack(singleBinary: cfgs.UseSingleBinary)
             );
 
             if (PropertyContainer != null && PropertyContainer.HasPropertyData)

@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using Autodesk.Revit.DB;
 
-namespace GLTFRevitExport {
+namespace GLTFRevitExport.Build {
     class Logger {
         // private vars to control indented logging
-        private const string _indentStep = "  ";
+        const string _indentStep = "  ";
 #if DEBUG
-        private static int _depth = 0;
+        static int _depth = 0;
 #endif
         /// <summary>
         /// Log debug message with element info

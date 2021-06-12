@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using GLTFRevitExport.Properties;
 
-namespace GLTFRevitExport.ExportContext.Geometry {
+namespace GLTFRevitExport.Build.Geometry {
     class PrimitiveData {
         public List<VectorData> Vertices { get; private set; }
         public List<FacetData> Faces { get; private set; }

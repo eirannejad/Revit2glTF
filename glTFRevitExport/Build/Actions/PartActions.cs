@@ -5,22 +5,20 @@ using GLTFRevitExport.GLTF;
 using GLTFRevitExport.GLTF.Schema;
 using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.ExportContext.Geometry;
+using GLTFRevitExport.Build.Geometry;
+using GLTFRevitExport.Build.Actions.BaseTypes;
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 
-namespace GLTFRevitExport.ExportContext.BuildActions
+namespace GLTFRevitExport.Build.Actions
 {
     class PartFromElementAction : BaseElementAction
     {
-        private View _view = null;
+        View _view = null;
         public PartFromElementAction(View view, Element element) : base(element) { _view = view; }
 
-        public override void Execute(GLTFBuilder gltf,
-                                     GLTFExportConfigs cfg,
-                                     Func<object, string[]> zoneFinder,
-                                     Func<object, glTFExtras> extrasBuilder)
+        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs)
         {
             // open a new node and store its id
             Logger.Log("> custom element");
@@ -34,9 +32,9 @@ namespace GLTFRevitExport.ExportContext.BuildActions
                         name: element.Name,
                         matrix: null,
                         exts: new glTFExtension[] {
-                            new GLTFBIMNodeExtension(element, null, IncludeProperties, PropertyContainer)
+                            new glTFBIMNodeExtension(element, cfgs.ExportParameters, PropertyContainer)
                         },
-                        extras: extrasBuilder(element)
+                        extras: cfgs.BuildExtras(element)
                         );
 
                     var vertices = new List<float>();
@@ -96,7 +94,7 @@ namespace GLTFRevitExport.ExportContext.BuildActions
                                     if (mat.Extensions != null)
                                     {
                                         foreach (var ext in mat.Extensions)
-                                            if (ext.Value is GLTFBIMMaterialExtensions matExt)
+                                            if (ext.Value is glTFBIMMaterialExtensions matExt)
                                                 return matExt.Id == material.UniqueId;
                                     }
                                     return false;
@@ -117,9 +115,9 @@ namespace GLTFRevitExport.ExportContext.BuildActions
                             gltf.AddMaterial(
                                 primitiveIndex: primIndex,
                                 name: material.Name,
-                                color: material.Color.IsValid ? material.Color.ToGLTF() : cfg.DefaultColor.ToGLTF(),
+                                color: material.Color.IsValid ? material.Color.ToGLTF() : cfgs.DefaultColor.ToGLTF(),
                                 exts: new glTFExtension[] {
-                        new GLTFBIMMaterialExtensions(material, IncludeProperties, PropertyContainer)
+                        new glTFBIMMaterialExtensions(material, cfgs.ExportParameters, PropertyContainer)
                                 },
                                 extras: null
                             );
@@ -139,11 +137,11 @@ namespace GLTFRevitExport.ExportContext.BuildActions
 
     class PartFromDataAction : BaseAction
     {
-        private readonly PartData _partData;
+        readonly PartData _partData;
 
         public PartFromDataAction(PartData partData) => _partData = partData;
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfg)
+        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs)
         {
             Logger.Log("> primitive");
 
@@ -165,8 +163,8 @@ namespace GLTFRevitExport.ExportContext.BuildActions
             Logger.Log("> material");
 
             // if we are not exporting materials, use the default color
-            if (!cfg.ExportMaterials)
-                UpdatePrimitiveMaterialByColor(gltf, primIndex, cfg.DefaultColor, 0.0d);
+            if (!cfgs.ExportMaterials)
+                UpdatePrimitiveMaterialByColor(gltf, primIndex, cfgs.DefaultColor, 0.0d);
 
             // if material information is not provided, make a material
             // based on color and transparency
@@ -174,13 +172,13 @@ namespace GLTFRevitExport.ExportContext.BuildActions
             {
                 // make sure color is valid, otherwise it will throw
                 // exception that color is not initialized
-                Color color = _partData.Color.IsValid ? _partData.Color : cfg.DefaultColor;
-                UpdatePrimitiveMaterialByColor(gltf, primIndex, color, _partData.Transparency);
+                Color color = _partData.Color.IsValid ? _partData.Color : cfgs.DefaultColor;
+                UpdatePrimitiveMaterialByColor(gltf,primIndex, color, _partData.Transparency);
             }
 
             // otherwise process the new material
             else
-                UpdatePrimitiveMaterialByMaterial(gltf, primIndex, _partData.Material);
+                UpdatePrimitiveMaterialByMaterial(gltf, primIndex, _partData.Material, cfgs.ExportParameters);
         }
 
         void UpdatePrimitiveMaterialByColor(GLTFBuilder gltf, uint primIndex, Color color, double transparency)
@@ -210,7 +208,7 @@ namespace GLTFRevitExport.ExportContext.BuildActions
             }
         }
 
-        void UpdatePrimitiveMaterialByMaterial(GLTFBuilder gltf, uint primIndex, Material material)
+        void UpdatePrimitiveMaterialByMaterial(GLTFBuilder gltf, uint primIndex, Material material, bool exportParams)
         {
             var existingMaterialIndex =
                 gltf.FindMaterial(
@@ -219,7 +217,7 @@ namespace GLTFRevitExport.ExportContext.BuildActions
                         if (mat.Extensions != null)
                         {
                             foreach (var ext in mat.Extensions)
-                                if (ext.Value is GLTFBIMMaterialExtensions matExt)
+                                if (ext.Value is glTFBIMMaterialExtensions matExt)
                                     return matExt.Id == material.UniqueId;
                         }
                         return false;
@@ -242,7 +240,7 @@ namespace GLTFRevitExport.ExportContext.BuildActions
                     name: material.Name,
                     color: material.Color.ToGLTF(material.Transparency / 128f),
                     exts: new glTFExtension[] {
-                        new GLTFBIMMaterialExtensions(material, IncludeProperties, PropertyContainer)
+                        new glTFBIMMaterialExtensions(material, exportParams, PropertyContainer)
                     },
                     extras: null
                 );

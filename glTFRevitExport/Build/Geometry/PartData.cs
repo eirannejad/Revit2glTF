@@ -1,6 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 
-namespace GLTFRevitExport.ExportContext.Geometry {
+namespace GLTFRevitExport.Build.Geometry {
     class PartData {
         public PartData(PrimitiveData primitive) => Primitive = primitive;
 
