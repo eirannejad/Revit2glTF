@@ -21,13 +21,6 @@ namespace GLTFRevitExport.GLTF.BufferSegments {
 
         public override uint Count => (uint)(Data.Length / 3);
 
-        public override byte[] ToByteArray() {
-            int dataSize = Data.Length * sizeof(float);
-            var byteArray = new byte[dataSize];
-            Buffer.BlockCopy(Data, 0, byteArray, 0, dataSize);
-            return byteArray;
-        }
-
         void SetBounds(float[] vectors) {
             // TODO: improve logic and performance
             List<float> vx = new List<float>();

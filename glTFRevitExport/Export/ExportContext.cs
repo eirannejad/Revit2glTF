@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define WRITE_BBOXES
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,9 +57,14 @@ namespace GLTFRevitExport.Export {
             // and needs to remember the result of the filter test
             // so it knows whether to run the corresponding END action or not
             var passResults = new Stack<bool>();
-            Build.BuildContext currentCtx = mainCtx;
-            Build.BuildContext activeLinkCtx = null;
+            BuildContext currentCtx = mainCtx;
+            BuildContext activeLinkCtx = null;
+            int counter = 0;
             foreach (var action in _actions) {
+                // build progress update
+                _cfgs.UpdateProgress(counter / (float)_actions.Count);
+                counter++;
+
                 action.AssetExt = currentCtx.AssetExtension;
                 // set the property source for the action if needed
                 if (!_cfgs.EmbedParameters)
@@ -157,7 +163,7 @@ namespace GLTFRevitExport.Export {
             var gltfPack = new List<GLTFPackageItem>();
 
             foreach (var buildCtx in buildContexts) {
-#if DEBUG
+#if DEBUG && WRITE_BBOXES
                 for (uint idx = 0; idx < buildCtx.Builder.NodeCount; idx++) {
                     if (buildCtx.Builder.GetNode(idx) is glTFNode node)
                         if (node.Extensions != null)

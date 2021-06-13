@@ -8,7 +8,6 @@ namespace GLTFRevitExport.Extensions {
         public static Transform ZTOY =
             Transform.CreateRotation(new XYZ(1, 0, 0), -Math.PI / 2.0);
 
-
         public static string GetId(this Element e) => e?.UniqueId;
 
         public static string GetId(this Color c)

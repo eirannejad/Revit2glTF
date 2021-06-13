@@ -72,5 +72,11 @@ namespace GLTFRevitExport {
 
         internal glTFExtras BuildExtras(object node)
             => ExtrasBuilder?.Invoke(node);
+
+        public delegate void GLTFProgressReporter(float value);
+        public GLTFProgressReporter ProgressReporter;
+
+        internal void UpdateProgress(float value)
+            => ProgressReporter?.Invoke(value);
     }
 }

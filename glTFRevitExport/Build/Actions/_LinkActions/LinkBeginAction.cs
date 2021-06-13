@@ -16,20 +16,4 @@ namespace GLTFRevitExport.Build.Actions {
             LinkId = element.UniqueId;
         }
     }
-
-    class LinkTransformAction : ElementTransformAction {
-        public LinkTransformAction(float[] xform) : base(xform) { }
-    }
-
-    class LinkBoundsAction : ElementBoundsAction {
-        public LinkBoundsAction() : base(null) { }
-
-        public glTFBIMBounds Bounds {
-            get => _bounds;
-            set => _bounds = value;
-        }
-    }
-
-    class LinkEndAction : ElementEndAction {
-    }
 }
