@@ -5,14 +5,14 @@ using GLTFRevitExport.Build.Actions.BaseTypes;
 
 namespace GLTFRevitExport.Build.Actions {
     class ElementEndAction : BuildEndAction {
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             Logger.Log("- element end");
 
             // close instance node
-            gltf.CloseNode();
+            ctx.Builder.CloseNode();
             // close type node
-            if (cfgs.ExportHierarchy)
-                gltf.CloseNode();
+            if (ctx.Configs.ExportHierarchy)
+                ctx.Builder.CloseNode();
         }
     }
 }

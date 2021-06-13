@@ -19,7 +19,7 @@ namespace GLTFRevitExport.Build.Actions {
             _extentsBbox = extents;
         }
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             Logger.Log("> level");
 
             Level level = (Level)element;
@@ -38,19 +38,19 @@ namespace GLTFRevitExport.Build.Actions {
             }
 
             // create level node
-            var levelNodeIdx = gltf.OpenNode(
+            var levelNodeIdx = ctx.Builder.OpenNode(
                 name: level.Name,
                 matrix: elevMatrix,
                 exts: new glTFExtension[] {
-                        new glTFBIMNodeExtension(level, cfgs.ExportParameters, PropertyContainer)
+                        new glTFBIMNodeExtension(level, ctx)
                 },
-                extras: cfgs.BuildExtras(level)
+                extras: ctx.Configs.BuildExtras(level)
             );
 
             // set level bounds
             if (_extentsBbox != null) {
                 var bounds = new glTFBIMBounds(_extentsBbox);
-                glTFNode node = gltf.GetNode(levelNodeIdx);
+                glTFNode node = ctx.Builder.GetNode(levelNodeIdx);
                 if (node.Extensions != null) {
                     foreach (var ext in node.Extensions) {
                         if (ext.Value is glTFBIMNodeExtension nodeExt) {
@@ -63,13 +63,13 @@ namespace GLTFRevitExport.Build.Actions {
                 }
             }
 
-            gltf.CloseNode();
+            ctx.Builder.CloseNode();
 
             // record the level in asset
-            if (AssetExt != null) {
-                if (AssetExt.Levels is null)
-                    AssetExt.Levels = new List<uint>();
-                AssetExt.Levels.Add(levelNodeIdx);
+            if (ctx.AssetExtension != null) {
+                if (ctx.AssetExtension.Levels is null)
+                    ctx.AssetExtension.Levels = new List<uint>();
+                ctx.AssetExtension.Levels.Add(levelNodeIdx);
             }
 
             // not need to do anything else

@@ -6,15 +6,15 @@ using Newtonsoft.Json;
 
 using Autodesk.Revit.DB;
 
+using GLTFRevitExport.Build;
 using GLTFRevitExport.Extensions;
 using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM {
     class glTFBIMNodeExtension : glTFBIMPropertyExtension {
-        public glTFBIMNodeExtension(Element e,
-                                    bool includeParameters,
-                                    glTFBIMPropertyContainer propContainer)
-            : base(e, includeParameters, propContainer)
+        public glTFBIMNodeExtension() : base() { }
+        public glTFBIMNodeExtension(Element e, BuildContext ctx)
+            : base(e, ctx)
         {
             // set level
             if (e.Document.GetElement(e.LevelId) is Level level)

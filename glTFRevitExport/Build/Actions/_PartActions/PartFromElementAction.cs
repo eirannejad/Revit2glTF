@@ -16,20 +16,20 @@ namespace GLTFRevitExport.Build.Actions {
         View _view = null;
         public PartFromElementAction(View view, Element element) : base(element) { _view = view; }
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             // open a new node and store its id
             Logger.Log("> custom element");
 
             foreach (var geom in element.get_Geometry(new Options { View = _view })) {
                 if (geom is Mesh mesh) {
 
-                    gltf.OpenNode(
+                    ctx.Builder.OpenNode(
                         name: element.Name,
                         matrix: null,
                         exts: new glTFExtension[] {
-                            new glTFBIMNodeExtension(element, cfgs.ExportParameters, PropertyContainer)
+                            new glTFBIMNodeExtension(element, ctx)
                         },
-                        extras: cfgs.BuildExtras(element)
+                        extras: ctx.Configs.BuildExtras(element)
                         );
 
                     var vertices = new List<float>();
@@ -67,7 +67,7 @@ namespace GLTFRevitExport.Build.Actions {
                         }
                     }
 
-                    var primIndex = gltf.AddPrimitive(
+                    var primIndex = ctx.Builder.AddPrimitive(
                         vertices: vertices.ToArray(),
                         normals: null,
                         faces: faces.ToArray()
@@ -77,11 +77,11 @@ namespace GLTFRevitExport.Build.Actions {
                     if (mesh.MaterialElementId != ElementId.InvalidElementId) {
                         Material material = element.Document.GetElement(mesh.MaterialElementId) as Material;
                         var existingMaterialIndex =
-                            gltf.FindMaterial(
+                            ctx.Builder.FindMaterial(
                                 (mat) => {
                                     if (mat.Extensions != null) {
                                         foreach (var ext in mat.Extensions)
-                                            if (ext.Value is glTFBIMMaterialExtensions matExt)
+                                            if (ext.Value is glTFBIMMaterialExtension matExt)
                                                 return matExt.Id == material.UniqueId;
                                     }
                                     return false;
@@ -90,19 +90,19 @@ namespace GLTFRevitExport.Build.Actions {
 
                         // check if material already exists
                         if (existingMaterialIndex >= 0) {
-                            gltf.UpdateMaterial(
+                            ctx.Builder.UpdateMaterial(
                                 primitiveIndex: primIndex,
                                 materialIndex: (uint)existingMaterialIndex
                             );
                         }
                         // otherwise make a new material and get its index
                         else {
-                            gltf.AddMaterial(
+                            ctx.Builder.AddMaterial(
                                 primitiveIndex: primIndex,
                                 name: material.Name,
-                                color: material.Color.IsValid ? material.Color.ToGLTF() : cfgs.DefaultColor.ToGLTF(),
+                                color: material.Color.IsValid ? material.Color.ToGLTF() : ctx.Configs.DefaultColor.ToGLTF(),
                                 exts: new glTFExtension[] {
-                        new glTFBIMMaterialExtensions(material, cfgs.ExportParameters, PropertyContainer)
+                                    new glTFBIMMaterialExtension(material, ctx)
                                 },
                                 extras: null
                             );
@@ -113,7 +113,7 @@ namespace GLTFRevitExport.Build.Actions {
                     else if (mesh.GraphicsStyleId != ElementId.InvalidElementId) {
                     }
 
-                    gltf.CloseNode();
+                    ctx.Builder.CloseNode();
                 }
             }
         }

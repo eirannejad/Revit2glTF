@@ -13,13 +13,13 @@ using GLTFRevitExport.Properties;
 
 namespace GLTFRevitExport.Build.Actions {
     class SceneEndAction : BuildEndAction {
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfg) {
+        public override void Execute(BuildContext ctx) {
             Logger.Log("- view end");
 
             // close root node
-            gltf.CloseNode();
+            ctx.Builder.CloseNode();
             // close scene
-            gltf.CloseScene();
+            ctx.Builder.CloseScene();
         }
     }
 }

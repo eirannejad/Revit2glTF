@@ -18,7 +18,7 @@ namespace GLTFRevitExport.Build.Actions {
             _elementType = type;
         }
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             // open a new node and store its id
             Logger.Log("+ element begin");
 
@@ -36,26 +36,22 @@ namespace GLTFRevitExport.Build.Actions {
             // create a node for its type
             // attemp at finding previously created node for this type
             // but only search children of already open node
-            if (cfgs.ExportHierarchy) {
+            if (ctx.Configs.ExportHierarchy) {
                 targetId = _elementType.GetId();
-                var typeNodeIdx = gltf.FindChildNode(nodeFilter);
+                var typeNodeIdx = ctx.Builder.FindChildNode(nodeFilter);
 
                 if (typeNodeIdx >= 0) {
-                    gltf.OpenExistingNode((uint)typeNodeIdx);
+                    ctx.Builder.OpenExistingNode((uint)typeNodeIdx);
                 }
                 // otherwise create and open a new node for this type
                 else {
-                    var bimExt = new glTFBIMNodeExtension(
-                        e: _elementType,
-                        includeParameters: cfgs.ExportParameters,
-                        propContainer: PropertyContainer
-                    );
+                    var bimExt = new glTFBIMNodeExtension(_elementType, ctx);
 
-                    gltf.OpenNode(
+                    ctx.Builder.OpenNode(
                         name: _elementType.Name,
                         matrix: null,
                         exts: new glTFExtension[] { bimExt },
-                        extras: cfgs.BuildExtras(_elementType)
+                        extras: ctx.Configs.BuildExtras(_elementType)
                     );
                 }
             }
@@ -64,26 +60,22 @@ namespace GLTFRevitExport.Build.Actions {
             // attemp at finding previously created node for this instance
             // but only search children of already open type node
             targetId = element.GetId();
-            var instNodeIdx = gltf.FindChildNode(nodeFilter);
+            var instNodeIdx = ctx.Builder.FindChildNode(nodeFilter);
 
             if (instNodeIdx >= 0) {
-                gltf.OpenExistingNode((uint)instNodeIdx);
+                ctx.Builder.OpenExistingNode((uint)instNodeIdx);
             }
             // otherwise create and open a new node for this type
             else {
-                var bimExt = new glTFBIMNodeExtension(
-                    e: element,
-                    includeParameters: cfgs.ExportParameters,
-                    propContainer: PropertyContainer
-                ) {
+                var bimExt = new glTFBIMNodeExtension(element, ctx) {
                     Uri = Uri
                 };
 
-                var newNodeIdx = gltf.OpenNode(
+                var newNodeIdx = ctx.Builder.OpenNode(
                     name: element.Name,
                     matrix: null,
                     exts: new glTFExtension[] { bimExt },
-                    extras: cfgs.BuildExtras(element)
+                    extras: ctx.Configs.BuildExtras(element)
                 );
             }
         }
