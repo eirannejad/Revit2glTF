@@ -5,31 +5,33 @@ using Newtonsoft.Json;
 
 using Autodesk.Revit.DB;
 
+using GLTFRevitExport.Build;
 using GLTFRevitExport.Extensions;
 using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
+using GLTFRevitExport.GLTF.Extensions.BIM.Properties;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM {
     [Serializable]
     class glTFBIMAssetExtension : glTFBIMExtension {
-        public glTFBIMAssetExtension(Document d, bool includeParameters = true, glTFBIMPropertyContainer propContainer = null) : base() {
+        public glTFBIMAssetExtension(Document d, BuildContext ctx) : base() {
             App = GetAppName(d);
             Id = GetDocumentId(d).ToString();
             Title = d.Title;
             Source = d.PathName;
-            if (includeParameters) {
-                if (propContainer is null)
-                    // embed properties
-                    Properties = GetProjectInfo(d);
-                else {
+            if (ctx.Configs.ExportParameters) {
+                if (ctx.PropertyContainer is glTFBIMPropertyContainer) {
                     // record properties
-                    propContainer.Record(Id, GetProjectInfo(d));
+                    ctx.PropertyContainer.Record(Id, GetProjectInfo(d));
                     // ensure property sources list is initialized
                     if (Containers is null)
                         Containers = new List<glTFBIMPropertyContainer>();
                     // add the new property source
-                    if (!Containers.Contains(propContainer))
-                        Containers.Add(propContainer);
+                    if (!Containers.Contains(ctx.PropertyContainer))
+                        Containers.Add(ctx.PropertyContainer);
                 }
+                else
+                    // embed properties
+                    Properties = GetProjectInfo(d);
             }
         }
 
@@ -81,28 +83,31 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
             return docProps;
         }
 
-        [JsonProperty("application")]
-        public string App { get; set; }
-
-        [JsonProperty("id")]
+        [JsonProperty("id", Order = 1)]
         public string Id { get; set; }
 
-        [JsonProperty("title")]
+        [JsonProperty("application", Order = 2)]
+        public string App { get; set; }
+
+        [JsonProperty("title", Order = 3)]
         public string Title { get; set; }
 
-        [JsonProperty("source")]
+        [JsonProperty("source", Order = 4)]
         public string Source { get; set; }
 
-        [JsonProperty("levels")]
+        [JsonProperty("levels", Order = 5)]
         public List<uint> Levels { get; set; }
 
-        [JsonProperty("grids")]
+        [JsonProperty("grids", Order = 6)]
         public List<uint> Grids { get; set; }
 
-        [JsonProperty("containers")]
+        [JsonProperty("bounds", Order = 7)]
+        public glTFBIMBounds Bounds { get; set; }
+
+        [JsonProperty("containers", Order = 8)]
         public List<glTFBIMPropertyContainer> Containers { get; set; }
 
-        [JsonProperty("properties")]
+        [JsonProperty("properties", Order = 9)]
         public Dictionary<string, object> Properties { get; set; }
     }
 }

@@ -6,7 +6,9 @@ using Newtonsoft.Json;
 
 using Autodesk.Revit.DB;
 
+using GLTFRevitExport.Build;
 using GLTFRevitExport.Extensions;
+using GLTFRevitExport.GLTF.Extensions.BIM.Properties;
 
 namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
     [Serializable]
@@ -26,20 +28,24 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
                 .Select(x => (BuiltInParameter)Enum.Parse(typeof(BuiltInParameter), x))
                 .ToArray();
 
-        public glTFBIMPropertyExtension(Element e, bool includeParameters = true, glTFBIMPropertyContainer propContainer = null) {
+        public glTFBIMPropertyExtension() {
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public glTFBIMPropertyExtension(Element e, BuildContext ctx) {
             // identity data
             Id = e.GetId();
             Taxonomies = GetTaxonomies(e);
             Classes = GetClasses(e);
-            
+
             // include parameters
-            if (includeParameters) {
-                if (propContainer is null)
+            if (ctx.Configs.ExportParameters) {
+                if (ctx.PropertyContainer is glTFBIMPropertyContainer)
+                    // record properties
+                    ctx.PropertyContainer.Record(Id, GetProperties(e));
+                else
                     // embed properties
                     Properties = GetProperties(e);
-                else
-                    // record properties
-                    propContainer.Record(Id, GetProperties(e));
             }
         }
 

@@ -172,10 +172,13 @@
     <Compile Include="GLTF.Extensions.BIM\BaseTypes\Attributes.cs" />
     <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMContainer.cs" />
     <Compile Include="GLTF.Extensions.BIM\glTFBIMBounds.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMNodeExtensions.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMMaterialExtensions.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMPropertyContainer.cs" />
+    <Compile Include="GLTF.Extensions.BIM\glTFBIMNodeExtension.cs" />
+    <Compile Include="GLTF.Extensions.BIM\glTFBIMMaterialExtension.cs" />
+    <Compile Include="GLTF.Extensions.BIM\Properties\glTFBIMPropertyContainer.cs" />
+    <Compile Include="GLTF.Extensions.BIM\glTFBIMSceneExtension.cs" />
     <Compile Include="GLTF.Extensions.BIM\glTFBIMVector.cs" />
+    <Compile Include="GLTF.Extensions.BIM\Properties\glTFBIMPropertyDataGroup.cs" />
+    <Compile Include="GLTF.Extensions.BIM\Properties\glTFPropertyData.cs" />
     <Compile Include="GLTF\BufferSegments\BufferScalar1Segment.cs" />
     <Compile Include="GLTF\BufferSegments\BufferScalar2Segment.cs" />
     <Compile Include="GLTF\BufferSegments\BufferScalar4Segment.cs" />

@@ -17,7 +17,7 @@ namespace GLTFRevitExport.Build.Actions {
 
         public PartFromDataAction(PartData partData) => _partData = partData;
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             Logger.Log("> primitive");
 
             // make a new mesh and assign the new material
@@ -29,7 +29,7 @@ namespace GLTFRevitExport.Build.Actions {
             foreach (var facet in _partData.Primitive.Faces)
                 faces.AddRange(facet.ToArray());
 
-            var primIndex = gltf.AddPrimitive(
+            var primIndex = ctx.Builder.AddPrimitive(
                 vertices: vertices.ToArray(),
                 normals: null,
                 faces: faces.ToArray()
@@ -38,21 +38,21 @@ namespace GLTFRevitExport.Build.Actions {
             Logger.Log("> material");
 
             // if we are not exporting materials, use the default color
-            if (!cfgs.ExportMaterials)
-                UpdatePrimitiveMaterialByColor(gltf, primIndex, cfgs.DefaultColor, 0.0d);
+            if (!ctx.Configs.ExportMaterials)
+                UpdatePrimitiveMaterialByColor(ctx.Builder, primIndex, ctx.Configs.DefaultColor, 0.0d);
 
             // if material information is not provided, make a material
             // based on color and transparency
             else if (_partData.Material is null) {
                 // make sure color is valid, otherwise it will throw
                 // exception that color is not initialized
-                Color color = _partData.Color.IsValid ? _partData.Color : cfgs.DefaultColor;
-                UpdatePrimitiveMaterialByColor(gltf, primIndex, color, _partData.Transparency);
+                Color color = _partData.Color.IsValid ? _partData.Color : ctx.Configs.DefaultColor;
+                UpdatePrimitiveMaterialByColor(ctx.Builder, primIndex, color, _partData.Transparency);
             }
 
             // otherwise process the new material
             else
-                UpdatePrimitiveMaterialByMaterial(gltf, primIndex, _partData.Material, cfgs.ExportParameters);
+                UpdatePrimitiveMaterialByMaterial(ctx.Builder, primIndex, _partData.Material, ctx);
         }
 
         void UpdatePrimitiveMaterialByColor(GLTFBuilder gltf, uint primIndex, Color color, double transparency) {
@@ -79,13 +79,13 @@ namespace GLTFRevitExport.Build.Actions {
             }
         }
 
-        void UpdatePrimitiveMaterialByMaterial(GLTFBuilder gltf, uint primIndex, Material material, bool exportParams) {
+        void UpdatePrimitiveMaterialByMaterial(GLTFBuilder gltf, uint primIndex, Material material, BuildContext ctx) {
             var existingMaterialIndex =
                 gltf.FindMaterial(
                     (mat) => {
                         if (mat.Extensions != null) {
                             foreach (var ext in mat.Extensions)
-                                if (ext.Value is glTFBIMMaterialExtensions matExt)
+                                if (ext.Value is glTFBIMMaterialExtension matExt)
                                     return matExt.Id == material.UniqueId;
                         }
                         return false;
@@ -106,7 +106,7 @@ namespace GLTFRevitExport.Build.Actions {
                     name: material.Name,
                     color: material.Color.ToGLTF(material.Transparency / 128f),
                     exts: new glTFExtension[] {
-                        new glTFBIMMaterialExtensions(material, exportParams, PropertyContainer)
+                        new glTFBIMMaterialExtension(material, ctx)
                     },
                     extras: null
                 );

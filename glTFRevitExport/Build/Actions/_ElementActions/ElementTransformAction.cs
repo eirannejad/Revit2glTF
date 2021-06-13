@@ -10,8 +10,8 @@ namespace GLTFRevitExport.Build.Actions {
 
         public ElementTransformAction(float[] matrix) => Matrix = matrix;
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
-            if (gltf.GetActiveNode() is glTFNode activeNode) {
+        public override void Execute(BuildContext ctx) {
+            if (ctx.Builder.GetActiveNode() is glTFNode activeNode) {
                 Logger.Log("> transform");
                 activeNode.Matrix = Matrix;
             }

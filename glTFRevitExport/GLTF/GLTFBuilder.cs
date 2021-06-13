@@ -185,6 +185,8 @@ namespace GLTFRevitExport.GLTF {
                 _gltf.ExtensionsUsed = new HashSet<string>();
             _gltf.ExtensionsUsed.Add(ext.Name);
         }
+
+        public glTFAsset PeekAsset() => _gltf.Asset;
         #endregion
 
         #region Scenes

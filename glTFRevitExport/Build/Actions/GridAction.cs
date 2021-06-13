@@ -14,7 +14,7 @@ namespace GLTFRevitExport.Build.Actions {
     class GridAction : BuildBeginAction {
         public GridAction(Element element) : base(element) { }
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             Logger.Log("> grid");
 
             Grid grid = (Grid)element;
@@ -24,7 +24,7 @@ namespace GLTFRevitExport.Build.Actions {
 
             if (grid.Curve is Line gridLine) {
                 // add gltf-bim extension data
-                var gltfBim = new glTFBIMNodeExtension(grid, cfgs.ExportParameters, PropertyContainer);
+                var gltfBim = new glTFBIMNodeExtension(grid, ctx);
 
                 // grab the two ends of the grid line as grid bounds
                 gltfBim.Bounds = new glTFBIMBounds(
@@ -33,20 +33,20 @@ namespace GLTFRevitExport.Build.Actions {
                 );
 
                 // create level node
-                var gridNodeIdx = gltf.OpenNode(
+                var gridNodeIdx = ctx.Builder.OpenNode(
                     name: grid.Name,
                     matrix: gridMatrix,
                     exts: new glTFExtension[] { gltfBim },
-                    extras: cfgs.BuildExtras(grid)
+                    extras: ctx.Configs.BuildExtras(grid)
                 );
 
-                gltf.CloseNode();
+                ctx.Builder.CloseNode();
 
                 // record the grid in asset
-                if (AssetExt != null) {
-                    if (AssetExt.Grids is null)
-                        AssetExt.Grids = new List<uint>();
-                    AssetExt.Grids.Add(gridNodeIdx);
+                if (ctx.AssetExtension != null) {
+                    if (ctx.AssetExtension.Grids is null)
+                        ctx.AssetExtension.Grids = new List<uint>();
+                    ctx.AssetExtension.Grids.Add(gridNodeIdx);
                 }
             }
 

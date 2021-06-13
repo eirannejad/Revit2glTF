@@ -17,10 +17,7 @@ using Autodesk.Revit.DB.Architecture;
 
 namespace GLTFRevitExport.Build.Actions.BaseTypes {
     abstract class BaseAction {
-        public glTFBIMAssetExtension AssetExt;
-        public glTFBIMPropertyContainer PropertyContainer = null;
-
-        public abstract void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs);  
+        public abstract void Execute(BuildContext ctx);
     }
 
     abstract class BaseElementAction : BaseAction {

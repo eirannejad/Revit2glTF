@@ -3,46 +3,14 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
-
-namespace GLTFRevitExport.GLTF.Extensions.BIM {
+namespace GLTFRevitExport.GLTF.Extensions.BIM.Properties {
     [Serializable]
-    class glTFBIMPropertyContainer : glTFBIMContainer {
-        string _uri;
-        GLTFBIMPropertyData _propData = new GLTFBIMPropertyData();
-
-        public glTFBIMPropertyContainer(string uri) {
-            _uri = uri;
-        }
-
-
-        [JsonProperty("$type")]
-        public override string Type => "properties";
-
-        [JsonProperty("uri")]
-        public override string Uri => _uri;
-
-        public bool HasPropertyData => _propData.Records.Count > 0;
-
-        public void Record(string id, Dictionary<string, object> props) => _propData.Record(id, props);
-
-        public string Pack() {
-            return JsonConvert.SerializeObject(
-                    _propData,
-                    new JsonSerializerSettings {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }
-                );
-        }
-    }
-
-    [Serializable]
-    class GLTFBIMPropertyData {
+    class glTFBIMPropertyData {
         [JsonProperty("records", Order = 1)]
         public Dictionary<string, HashSet<uint>> Records { get; set; } = new Dictionary<string, HashSet<uint>>();
 
         [JsonProperty("groups", Order = 2)]
-        public List<GLTFBIMPropertyDataGroup> Groups { get; set; } = new List<GLTFBIMPropertyDataGroup>();
+        public List<glTFBIMPropertyDataGroup> Groups { get; set; } = new List<glTFBIMPropertyDataGroup>();
 
         [JsonProperty("keys", Order = 3)]
         public List<string> Keys { get; set; } = new List<string>();
@@ -52,8 +20,8 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
 
         public void Record(string id, Dictionary<string, object> props) {
             // add properties and group
-            var grp = new GLTFBIMPropertyDataGroup();
-                
+            var grp = new glTFBIMPropertyDataGroup();
+
             foreach (var propData in props) {
                 if (propData.Value is null)
                     continue;
@@ -92,22 +60,5 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
                 Records.Add(id, new HashSet<uint> { groupIndex });
             }
         }
-    }
-
-    [Serializable]
-    class GLTFBIMPropertyDataGroup {
-        [JsonProperty("keys", Order = 1)]
-        public List<uint> Keys { get; set; } = new List<uint>();
-
-        [JsonProperty("values", Order = 2)]
-        public List<uint> Values { get; set; } = new List<uint>();
-
-        public override bool Equals(object obj) {
-            if (obj is GLTFBIMPropertyDataGroup other)
-                return Keys.Equals(other.Keys) && Values.Equals(other.Values);
-            return false;
-        }
-
-        public override int GetHashCode() => base.GetHashCode();
     }
 }

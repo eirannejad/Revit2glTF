@@ -13,25 +13,29 @@ using GLTFRevitExport.Properties;
 
 namespace GLTFRevitExport.Build.Actions {
     class SceneBeginAction : BuildBeginAction {
+        public View SceneView => element as View;
+
         public SceneBeginAction(View view) : base(view) { }
 
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfgs) {
+        public override void Execute(BuildContext ctx) {
             // start a new gltf scene
             Logger.Log("+ view begin");
-            gltf.OpenScene(
+            ctx.Builder.OpenScene(
                 name: element.Name,
                 exts: new glTFExtension[] {
-                    new glTFBIMNodeExtension(element, cfgs.ExportParameters, PropertyContainer)
+                    new glTFBIMSceneExtension(SceneView, ctx)
                 },
-                extras: cfgs.BuildExtras(element)
+                extras: ctx.Configs.BuildExtras(element)
                 );
 
             // open a root node for the scene
-            gltf.OpenNode(
+            ctx.Builder.OpenNode(
                 name: string.Format(StringLib.SceneRootNodeName, element.Name),
                 matrix: Transform.CreateTranslation(new XYZ(0, 0, 0)).ToGLTF(),
-                extras: null,
-                exts: null
+                exts: new glTFExtension[] {
+                    new glTFBIMNodeExtension()
+                },
+                extras: null
                 );
         }
     }

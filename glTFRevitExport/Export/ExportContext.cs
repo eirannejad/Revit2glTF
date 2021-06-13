@@ -1,4 +1,4 @@
-﻿//#define WRITE_BBOXES
+﻿#define WRITE_BBOXES
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -65,11 +65,6 @@ namespace GLTFRevitExport.Export {
                 _cfgs.UpdateProgress(counter / (float)_actions.Count);
                 counter++;
 
-                action.AssetExt = currentCtx.AssetExtension;
-                // set the property source for the action if needed
-                if (!_cfgs.EmbedParameters)
-                    action.PropertyContainer = currentCtx.PropertyContainer;
-
                 if (!_cfgs.EmbedLinkedModels) {
                     if (action is LinkBeginAction linkBeg) {
                         linkBeg.Uri = $"{linkBeg.LinkId}.gltf";
@@ -104,6 +99,7 @@ namespace GLTFRevitExport.Export {
                         // close the link builder
                         else if (action is LinkEndAction) {
                             // close the link
+                            activeLinkCtx.Builder.CloseNode();
                             activeLinkCtx.Builder.CloseScene();
                             buildContexts.Add(activeLinkCtx);
                             // switch to main builder
@@ -116,11 +112,11 @@ namespace GLTFRevitExport.Export {
                 switch (action) {
                     case BuildBeginAction beg:
                         if (actionFilter is null) {
-                            beg.Execute(currentCtx.Builder, _cfgs);
+                            beg.Execute(currentCtx);
                             passResults.Push(true);
                         }
                         else if (beg.Passes(actionFilter)) {
-                            beg.Execute(currentCtx.Builder, _cfgs);
+                            beg.Execute(currentCtx);
                             passResults.Push(true);
                         }
                         else
@@ -129,11 +125,11 @@ namespace GLTFRevitExport.Export {
 
                     case BuildEndAction end:
                         if (passResults.Pop())
-                            end.Execute(currentCtx.Builder, _cfgs);
+                            end.Execute(currentCtx);
                         break;
 
                     case BaseAction ea:
-                        ea.Execute(currentCtx.Builder, _cfgs);
+                        ea.Execute(currentCtx);
                         break;
                 }
 
@@ -148,7 +144,21 @@ namespace GLTFRevitExport.Export {
                             cfgs: _cfgs
                         );
 
-                        activeLinkCtx.Builder.OpenScene(name: "default", exts: null, extras: null);
+                        activeLinkCtx.Builder.OpenScene(
+                            name: "default",
+                            exts: new glTFExtension[] {
+                                new glTFBIMSceneExtension()
+                            },
+                            extras: null
+                            );
+                        
+                        activeLinkCtx.Builder.OpenNode(
+                            name: "default",
+                            matrix: null,
+                            exts: new glTFExtension[] {
+                                new glTFBIMNodeExtension()
+                            },
+                            extras: null);
 
                         // use this builder for all subsequent elements
                         currentCtx = activeLinkCtx;
