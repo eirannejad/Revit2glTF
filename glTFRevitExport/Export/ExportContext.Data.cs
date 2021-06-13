@@ -11,7 +11,11 @@ using GLTFRevitExport.Build.Actions.BaseTypes;
 using GLTFRevitExport.Build.Geometry;
 
 namespace GLTFRevitExport.Export {
-    sealed partial class ExportContext : IExportContext {
+#if REVIT2019
+    sealed partial class ExportContext : IExportContext, IModelExportContext {
+#else
+    sealed partial class ExportContext : IExportContext, IExportContextBase, IModelExportContext {
+#endif
         /// <summary>
         /// Configurations for the active export
         /// </summary>

@@ -16,7 +16,7 @@ using GLTFRevitExport.Build.Geometry;
 
 namespace GLTFRevitExport.Export {
 #if REVIT2019
-    sealed partial class GLTFExportContext : IExportContext, IModelExportContext {
+    sealed partial class ExportContext : IExportContext, IModelExportContext {
 #else
     sealed partial class ExportContext : IExportContext, IExportContextBase, IModelExportContext {
 #endif
