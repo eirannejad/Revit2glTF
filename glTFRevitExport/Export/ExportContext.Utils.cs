@@ -15,7 +15,11 @@ using GLTFRevitExport.Build.Actions;
 using GLTFRevitExport.Build.Geometry;
 
 namespace GLTFRevitExport.Export {
-    sealed partial class ExportContext : IExportContext {
+#if REVIT2019
+    sealed partial class ExportContext : IExportContext, IModelExportContext {
+#else
+    sealed partial class ExportContext : IExportContext, IExportContextBase, IModelExportContext {
+#endif
         bool RecordOrSkip(Element e, string skipMessage, bool setFlag = false) {
             bool skip = false;
             if (e is null) {

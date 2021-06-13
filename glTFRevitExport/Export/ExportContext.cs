@@ -1,4 +1,4 @@
-﻿#define WRITE_BBOXES
+﻿//#define WRITE_BBOXES
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -14,7 +14,11 @@ using GLTFRevitExport.Build.Actions;
 using GLTFRevitExport.Build.Actions.BaseTypes;
 
 namespace GLTFRevitExport.Export {
-    sealed partial class ExportContext : IExportContext {
+#if REVIT2019
+    sealed partial class ExportContext : IExportContext, IModelExportContext {
+#else
+    sealed partial class ExportContext : IExportContext, IExportContextBase, IModelExportContext {
+#endif
         public ExportContext(Document doc, GLTFExportConfigs exportConfigs = null) {
             // ensure base configs
             _cfgs = exportConfigs is null ? new GLTFExportConfigs() : exportConfigs;
