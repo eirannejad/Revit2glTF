@@ -35,15 +35,4 @@ namespace GLTFRevitExport.Build.Actions {
                 );
         }
     }
-
-    class SceneEndAction : BuildEndAction {
-        public override void Execute(GLTFBuilder gltf, GLTFExportConfigs cfg) {
-            Logger.Log("- view end");
-
-            // close root node
-            gltf.CloseNode();
-            // close scene
-            gltf.CloseScene();
-        }
-    }
 }

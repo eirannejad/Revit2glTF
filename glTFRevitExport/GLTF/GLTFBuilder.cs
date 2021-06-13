@@ -23,15 +23,16 @@ namespace GLTFRevitExport.GLTF {
         /// </summary>
         public List<GLTFPackageItem> Pack(bool singleBinary = true) {
             // TODO: Add glb option
-            // create a gltf bundle
-            var bundleItems = new List<GLTFPackageItem>();
 
-            // add the buffers to the gltf and to the bundle
-            List<byte> bufferBytes = new List<byte>();
+            int CreateBuffer(List<BufferSegment> segments, int startIndex, int bufferCounter, out byte[] binData) {
+                // add the buffers to the gltf and to the bundle
+                List<byte> bufferBytes = new List<byte>();
 
-            if (singleBinary) {
-                uint bufferIndex = 0;
-                foreach (var seg in _bufferSegments) {
+                for (int sidx = startIndex; sidx < segments.Count; sidx++) {
+                    // get the segment bytes
+                    var seg = segments[sidx];
+                    var bytes = seg.ToByteArray();
+
                     // align the data correctly
                     uint dataSize = 0;
                     // calculate necessary padding
@@ -45,52 +46,102 @@ namespace GLTFRevitExport.GLTF {
                             dataSize = 4;
                             break;
                     }
+
+                    // calculate padding
+                    int padding = 0;
                     if (dataSize > 0) {
-                        // add padding
-                        var bufferSize = (uint)bufferBytes.Count;
-                        var padding =
-                            (uint)(Math.Ceiling(bufferSize / (float)dataSize) * dataSize)
-                            - bufferSize;
-                        if (padding > 0)
-                            bufferBytes.AddRange(new byte[padding]);
+                        var bufferSize = bufferBytes.Count;
+                        padding = (int)(Math.Ceiling(bufferSize / (float)dataSize) * dataSize) - bufferSize;
                     }
 
-                    // make the buffer view now
-                    var bytes = seg.ToByteArray();
-                    var bufferView = new glTFBufferView {
-                        Buffer = bufferIndex,
-                        ByteLength = (uint)bytes.Length,
-                        ByteOffset = (uint)bufferBytes.Count,
-                        Target = seg.Target
-                    };
-                    _gltf.BufferViews.Add(bufferView);
+                    // if buffer has enough space
+                    if ((bufferBytes.Count + padding + bytes.Length) < maxBufferSize) {
+                        // add padding
+                        if (padding > 0)
+                            bufferBytes.AddRange(new byte[padding]);
 
-                    // add the data to buffer
-                    bufferBytes.AddRange(bytes);
+                        // make the buffer view now
+                        var bufferView = new glTFBufferView {
+                            Buffer = (uint)bufferCounter,
+                            ByteLength = (uint)bytes.Length,
+                            ByteOffset = (uint)bufferBytes.Count,
+                            Target = seg.Target
+                        };
+                        _gltf.BufferViews.Add(bufferView);
 
-                    var accessor = new glTFAccessor {
-                        Type = seg.Type,
-                        ComponentType = seg.DataType,
-                        BufferView = (uint)_gltf.BufferViews.Count - 1,
-                        ByteOffset = 0,
-                        Count = seg.Count,
-                        Min = seg.Min,
-                        Max = seg.Max,
-                    };
-                    _gltf.Accessors.Add(accessor);
+                        // add the data to buffer
+                        bufferBytes.AddRange(bytes);
+
+                        var accessor = new glTFAccessor {
+                            Type = seg.Type,
+                            ComponentType = seg.DataType,
+                            BufferView = (uint)_gltf.BufferViews.Count - 1,
+                            ByteOffset = 0,
+                            Count = seg.Count,
+                            Min = seg.Min,
+                            Max = seg.Max,
+                        };
+                        _gltf.Accessors.Add(accessor);
+                    }
+                    // otherwise return the index of this segment,
+                    // that wasn't included in this buffer
+                    else {
+                        // if buffer is empty, this segment is too large for 
+                        // max buffer size
+                        if (bufferBytes.Count == 0) {
+                            throw new Exception($"A single segment data is larger than max buffer size ({bytes.Length} > {maxBufferSize})");
+                        }
+                        // grab all the collected data
+                        binData = bufferBytes.ToArray();
+                        // and return index of segment to start with in the next
+                        // buffer
+                        return sidx;
+                    }
+                    // move on to the next segment
                 }
 
+                // only if all the segments fit inside the binary buffer,
+                // code gets to there. reu
+                binData = bufferBytes.ToArray();
+                return segments.Count;
+            }
+
+            // create a gltf bundle
+            var bundleItems = new List<GLTFPackageItem>();
+
+            // while new buffer can be made from the segments and not all the
+            // segments were fit inside the created buffer, keep making buffers
+            int bufferIndex = 0;
+            bool creatingFirstBuffer = true;
+            bool allSegmentsDone = true;
+            int segmentStartIndex = 0;
+            do {
+                var lastIndex = CreateBuffer(_bufferSegments, segmentStartIndex, bufferIndex, out var binData);
+                creatingFirstBuffer = (bufferIndex == 0);
+                allSegmentsDone = lastIndex == _bufferSegments.Count;
+
+                if (creatingFirstBuffer && singleBinary && !allSegmentsDone)
+                    throw new Exception("Data is too large for a single buffer. Disable the single binary export option");
+
+                // otherwise add the binary buffer to the package and move on
+                string bufferName = $"{_name}{bufferIndex}.bin";
+                if (singleBinary)
+                    bufferName = $"{_name}.bin";
+                bundleItems.Add(
+                    new GLTFPackageBinaryItem(bufferName, binData)
+                    );
+
                 var buffer = new glTFBuffer {
-                    ByteLength = (uint)bufferBytes.Count,
-                    Uri = $"{_name}.bin"
+                    ByteLength = (uint)binData.Count(),
+                    // assuming buffer is stored alongside gltf
+                    Uri = bufferName
                 };
                 _gltf.Buffers.Add(buffer);
 
-                bundleItems.Add(new GLTFPackageBinaryItem($"{_name}.bin", bufferBytes.ToArray()));
+                bufferIndex++;
+                segmentStartIndex = lastIndex;
             }
-            else {
-                // TODO: multiple binaries
-            }
+            while (!allSegmentsDone);
 
             // store snapshot of collected data into a gltf structure
             var model = new GLTFPackageModelItem(

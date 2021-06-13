@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -35,6 +36,13 @@ namespace GLTFRevitExport.GLTF.BufferSegments.BaseTypes {
                 Array.Copy(_max, max, _max.Length);
                 return max;
             }
+        }
+
+        public override byte[] ToByteArray() {
+            int dataSize = Data.Length * Marshal.SizeOf(default(T));
+            var byteArray = new byte[dataSize];
+            Buffer.BlockCopy(Data, 0, byteArray, 0, dataSize);
+            return byteArray;
         }
 
         public override uint Count => (uint)Data.Length;

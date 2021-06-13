@@ -15,12 +15,5 @@ namespace GLTFRevitExport.GLTF.BufferSegments {
             _min = new ushort[] { Data.Min() };
             _max = new ushort[] { Data.Max() };
         }
-
-        public override byte[] ToByteArray() {
-            int dataSize = Data.Length * sizeof(ushort);
-            var byteArray = new byte[dataSize];
-            Buffer.BlockCopy(Data, 0, byteArray, 0, dataSize);
-            return byteArray;
-        }
     }
 }
