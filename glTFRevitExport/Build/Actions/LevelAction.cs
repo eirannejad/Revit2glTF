@@ -5,11 +5,12 @@ using System.Linq;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.Build.Actions.BaseTypes;
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 namespace GLTFRevitExport.Build.Actions {
     class LevelAction : BuildBeginAction {
@@ -42,14 +43,14 @@ namespace GLTFRevitExport.Build.Actions {
                 name: level.Name,
                 matrix: elevMatrix,
                 exts: new glTFExtension[] {
-                        new glTFBIMNodeExtension(level, ctx)
+                        new glTFRevitElementExt(level, ctx)
                 },
                 extras: ctx.Configs.BuildExtras(level)
             );
 
             // set level bounds
             if (_extentsBbox != null) {
-                var bounds = new glTFBIMBounds(_extentsBbox);
+                var bounds = _extentsBbox.TOGLTFBounds();
                 glTFNode node = ctx.Builder.GetNode(levelNodeIdx);
                 if (node.Extensions != null) {
                     foreach (var ext in node.Extensions) {

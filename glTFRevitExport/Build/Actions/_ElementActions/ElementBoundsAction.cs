@@ -1,8 +1,8 @@
 ﻿using System;
 
-using GLTFRevitExport.GLTF;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Build.Actions.BaseTypes;
 
 namespace GLTFRevitExport.Build.Actions {

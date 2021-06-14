@@ -2,7 +2,7 @@
 using System.Threading;
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF.Schema;
+using GLTF2BIM.GLTF.Schema;
 using GLTFRevitExport.Extensions;
 using GLTFRevitExport.Properties;
 

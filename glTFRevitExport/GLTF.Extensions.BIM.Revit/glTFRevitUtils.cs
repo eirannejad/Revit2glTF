@@ -6,16 +6,17 @@ using Newtonsoft.Json;
 
 using Autodesk.Revit.DB;
 
+using GLTF2BIM.GLTF.Extensions.BIM.BaseTypes;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
+
 using GLTFRevitExport.Build;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Extensions.BIM.Properties;
 
-namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
-    [Serializable]
-    abstract class glTFBIMPropertyExtension : glTFBIMExtension {
+namespace GLTFRevitExport.GLTF.Extensions.BIM.Revit {
+    internal static class glTFRevitUtils {
         const string _revitPrefix = "Revit";
 
-        readonly BuiltInParameter[] excludeBuiltinParams =
+        static readonly BuiltInParameter[] excludeBuiltinParams =
             Enum.GetNames(typeof(BuiltInParameter))
                 .Where(x =>
                     x.Contains("_NAME")
@@ -28,36 +29,15 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
                 .Select(x => (BuiltInParameter)Enum.Parse(typeof(BuiltInParameter), x))
                 .ToArray();
 
-        public glTFBIMPropertyExtension() {
-            Id = Guid.NewGuid().ToString();
-        }
-
-        public glTFBIMPropertyExtension(Element e, BuildContext ctx) {
-            // identity data
-            Id = e.GetId();
-            Taxonomies = GetTaxonomies(e);
-            Classes = GetClasses(e);
-
-            // include parameters
-            if (ctx.Configs.ExportParameters) {
-                if (ctx.PropertyContainer is glTFBIMPropertyContainer)
-                    // record properties
-                    ctx.PropertyContainer.Record(Id, GetProperties(e));
-                else
-                    // embed properties
-                    Properties = GetProperties(e);
-            }
-        }
-
-        Dictionary<string, object> GetProperties(Element e) {
+        public static Dictionary<string, object> GetProperties(glTFBIMExtension target, Element element) {
             // exclude list for parameters that are processed by this
             // constructor and should not be included in 'this.Properties'
             var excludeParams = new List<BuiltInParameter>(excludeBuiltinParams);
 
-            bool isType = e is ElementType;
+            bool isType = element is ElementType;
 
             // set the properties on this object from their associated builtin params
-            foreach (var propInfo in GetType().GetProperties()) {
+            foreach (var propInfo in target.GetType().GetProperties()) {
                 var apiParamInfo =
                     propInfo.GetCustomAttributes(typeof(RevitBuiltinParametersAttribute), false)
                             .Cast<RevitBuiltinParametersAttribute>()
@@ -65,13 +45,13 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
                 if (apiParamInfo != null) {
                     object paramValue =
                         isType ?
-                        GetParamValue(e, apiParamInfo.TypeParam) :
-                        GetParamValue(e, apiParamInfo.InstanceParam);
+                        GetParamValue(element, apiParamInfo.TypeParam) :
+                        GetParamValue(element, apiParamInfo.InstanceParam);
 
                     // if there is compatible value, set the prop on this
                     if (paramValue != null
                             && propInfo.PropertyType.IsAssignableFrom(paramValue.GetType()))
-                        propInfo.SetValue(this, paramValue);
+                        propInfo.SetValue(target, paramValue);
 
                     // add the processed params to exclude
                     excludeParams.Add(apiParamInfo.TypeParam);
@@ -79,10 +59,10 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
                 }
             }
 
-            return GetParamValues(e, exclude: excludeParams);
+            return GetParamValues(element, exclude: excludeParams);
         }
 
-        List<string> GetTaxonomies(Element e) {
+        public static List<string> GetTaxonomies(Element e) {
             var taxonomies = new List<string>();
             // types show the hierarchical structure of data (vertical)
             if (e is ElementType et) {
@@ -153,7 +133,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             return taxonomies;
         }
 
-        List<string> GetClasses(Element e) {
+        public static List<string> GetClasses(Element e) {
             var classes = new List<string>();
             // TODO: get correct uniformat category
             classes.Add(
@@ -181,7 +161,7 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
         /// Return a dictionary of all the given 
         /// element parameter names and values.
         /// </summary>
-        Dictionary<string, object> GetParamValues(Element e, List<BuiltInParameter> exclude = null) {
+        static Dictionary<string, object> GetParamValues(Element e, List<BuiltInParameter> exclude = null) {
             // private function to find a parameter in a list of builins
             bool containsParameter(List<BuiltInParameter> paramList, Parameter param) {
                 if (param.Definition is InternalDefinition paramDef)
@@ -212,66 +192,10 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             return paramData;
         }
 
-        object GetParamValue(Element e, BuiltInParameter p) {
+        static object GetParamValue(Element e, BuiltInParameter p) {
             if (e.get_Parameter(p) is Parameter param)
                 return param.ToGLTF();
             return null;
         }
-
-        [JsonProperty("id", Order = 1)]
-        public string Id { get; set; }
-
-        // e.g. revit::Door::MyFamily::MyFamilyType
-        [JsonProperty("taxonomies", Order = 2)]
-        public List<string> Taxonomies { get; set; } = new List<string>();
-
-        [JsonProperty("classes", Order = 3)]
-        public List<string> Classes { get; set; } = new List<string>();
-
-        [JsonProperty("mark", Order = 4)]
-        [RevitBuiltinParameters(
-            BuiltInParameter.ALL_MODEL_TYPE_MARK,
-            BuiltInParameter.ALL_MODEL_MARK
-            )
-        ]
-        public string Mark { get; set; }
-
-        [JsonProperty("description", Order = 5)]
-        [RevitBuiltinParameters(
-            BuiltInParameter.ALL_MODEL_DESCRIPTION,
-            BuiltInParameter.ALL_MODEL_DESCRIPTION
-            )
-        ]
-        public string Description { get; set; }
-
-        [JsonProperty("comment", Order = 6)]
-        [RevitBuiltinParameters(
-            BuiltInParameter.ALL_MODEL_TYPE_COMMENTS,
-            BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS
-            )
-        ]
-        public string Comment { get; set; }
-
-        [JsonProperty("uri", Order = 7)]
-        public string Uri { get; set; }
-
-        [JsonProperty("dataUrl", Order = 8)]
-        [RevitBuiltinParameters(
-            BuiltInParameter.ALL_MODEL_URL,
-            BuiltInParameter.ALL_MODEL_URL
-            )
-        ]
-        public string DataUrl { get; set; }
-
-        [JsonProperty("imageUrl", Order = 9)]
-        [RevitBuiltinParameters(
-            BuiltInParameter.ALL_MODEL_TYPE_IMAGE,
-            BuiltInParameter.ALL_MODEL_IMAGE
-            )
-        ]
-        public string ImageUrl { get; set; }
-
-        [JsonProperty("properties", Order = 99)]
-        public Dictionary<string, object> Properties { get; set; }
     }
 }

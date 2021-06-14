@@ -2,7 +2,7 @@
 
 using Autodesk.Revit.DB;
 
-namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
+namespace GLTFRevitExport.GLTF.Extensions.BIM.Revit {
     [AttributeUsage(AttributeTargets.Property)]
     class RevitBuiltinParametersAttribute : Attribute {
         public BuiltInParameter TypeParam { get; private set; }
@@ -13,5 +13,4 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes {
             InstanceParam = instParam;
         }
     }
-
 }

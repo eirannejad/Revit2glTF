@@ -4,12 +4,13 @@ using System.Linq;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.Build.Actions.BaseTypes;
 using GLTFRevitExport.Properties;
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 namespace GLTFRevitExport.Build.Actions {
     class SceneBeginAction : BuildBeginAction {
@@ -23,7 +24,7 @@ namespace GLTFRevitExport.Build.Actions {
             ctx.Builder.OpenScene(
                 name: element.Name,
                 exts: new glTFExtension[] {
-                    new glTFBIMSceneExtension(SceneView, ctx)
+                    new glTFRevitViewExt(SceneView, ctx)
                 },
                 extras: ctx.Configs.BuildExtras(element)
                 );
@@ -33,7 +34,7 @@ namespace GLTFRevitExport.Build.Actions {
                 name: string.Format(StringLib.SceneRootNodeName, element.Name),
                 matrix: Transform.CreateTranslation(new XYZ(0, 0, 0)).ToGLTF(),
                 exts: new glTFExtension[] {
-                    new glTFBIMNodeExtension()
+                    new glTFRevitElementExt()
                 },
                 extras: null
                 );

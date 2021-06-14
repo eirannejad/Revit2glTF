@@ -1,245 +1,209 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E089540-E5C0-45D9-BB33-3CBA0E4373B5}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GLTFRevitExport</RootNamespace>
-    <AssemblyName>GLTFRevitExport</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('2017'))">
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <RevitVersion>2017</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('2018'))">
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <RevitVersion>2018</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('2019'))">
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <RevitVersion>2019</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('2020'))">
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <RevitVersion>2020</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('2021'))">
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <RevitVersion>2021</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2017|x64'">
-    <OutputPath>bin\Debug2017\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;REVIT2017</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2018|x64'">
-    <OutputPath>bin\Debug2018\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;REVIT2018</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2019|x64'">
-    <OutputPath>bin\Debug2019\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;REVIT2019</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2020|x64'">
-    <OutputPath>bin\Debug2020\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;REVIT2020</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2021|x64'">
-    <OutputPath>bin\Debug2021\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;REVIT2021</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2017|x64'">
-    <OutputPath>bin\Release2017\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>REVIT2017</DefineConstants>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2018|x64'">
-    <OutputPath>bin\Release2018\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>REVIT2018</DefineConstants>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2019|x64'">
-    <OutputPath>bin\Release2019\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>REVIT2019</DefineConstants>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2020|x64'">
-    <OutputPath>bin\Release2020\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>REVIT2020</DefineConstants>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2021|x64'">
-    <OutputPath>bin\Release2021\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>REVIT2021</DefineConstants>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Build\Actions\BaseTypes.cs" />
-    <Compile Include="Build\Actions\_ElementActions\ElementEndAction.cs" />
-    <Compile Include="Build\Actions\_ElementActions\ElementBeginAction.cs" />
-    <Compile Include="Build\Actions\_ElementActions\ElementBoundsAction.cs" />
-    <Compile Include="Build\Actions\_ElementActions\ElementTransformAction.cs" />
-    <Compile Include="Build\Actions\_LinkActions\LinkBeginAction.cs" />
-    <Compile Include="Build\Actions\_LinkActions\LinkBoundsAction.cs" />
-    <Compile Include="Build\Actions\_LinkActions\LinkEndAction.cs" />
-    <Compile Include="Build\Actions\_LinkActions\LinkTransformAction.cs" />
-    <Compile Include="Build\Actions\_PartActions\PartFromDataAction.cs" />
-    <Compile Include="Build\Actions\_PartActions\PartFromElementAction.cs" />
-    <Compile Include="Build\Actions\_SceneActions\SceneBeginAction.cs" />
-    <Compile Include="Build\Actions\_SceneActions\SceneEndAction.cs" />
-    <Compile Include="Build\Actions\GridAction.cs" />
-    <Compile Include="Build\Actions\LevelAction.cs" />
-    <Compile Include="Build\BuildContext.cs" />
-    <Compile Include="Build\Geometry\FacetData.cs" />
-    <Compile Include="Build\Geometry\PartData.cs" />
-    <Compile Include="Build\Geometry\PrimitiveData.cs" />
-    <Compile Include="Build\Geometry\VectorData.cs" />
-    <Compile Include="Export\ExportContext.Data.cs" />
-    <Compile Include="Export\ExportContext.IExportContext.cs" />
-    <Compile Include="Export\ExportContext.cs" />
-    <Compile Include="Export\ExportContext.Utils.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\Attributes.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMContainer.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMBounds.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMNodeExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMMaterialExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\Properties\glTFBIMPropertyContainer.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMSceneExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMVector.cs" />
-    <Compile Include="GLTF.Extensions.BIM\Properties\glTFBIMPropertyDataGroup.cs" />
-    <Compile Include="GLTF.Extensions.BIM\Properties\glTFPropertyData.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferScalar1Segment.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferScalar2Segment.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferScalar4Segment.cs" />
-    <Compile Include="GLTF\BufferSegments\BaseTypes.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferVectorSegment.cs" />
-    <Compile Include="GLTF\GLTFBuilder.Data.cs" />
-    <Compile Include="GLTF\GLTFBuilder.Utils.cs" />
-    <Compile Include="GLTF\Package\GLTFPackageBinaryItem.cs" />
-    <Compile Include="GLTF\Package\BaseTypes.cs" />
-    <Compile Include="Extensions\RevitAPIExtensions.cs" />
-    <Compile Include="Extensions\NumberExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="GLTFExportConfigs.cs" />
-    <Compile Include="GLTFExporter.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMAssetExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMPropertyExtension.cs" />
-    <Compile Include="GLTF\Package\GLTFPackageJsonItem.cs" />
-    <Compile Include="GLTF\Package\GLTFPackageModelItem.cs" />
-    <Compile Include="GLTF\Schema\glTF.cs" />
-    <Compile Include="GLTF\Schema\glTFAccessor.cs" />
-    <Compile Include="GLTF\Schema\glTFAsset.cs" />
-    <Compile Include="GLTF\Schema\glTFAttributes.cs" />
-    <Compile Include="GLTF\Schema\glTFBuffer.cs" />
-    <Compile Include="GLTF\Schema\glTFBufferView.cs" />
-    <Compile Include="GLTF\Schema\glTFConstants.cs" />
-    <Compile Include="GLTF\Schema\glTFExtension.cs" />
-    <Compile Include="GLTF\Schema\glTFExtras.cs" />
-    <Compile Include="GLTF\Schema\glTFMaterial.cs" />
-    <Compile Include="GLTF\Schema\glTFMesh.cs" />
-    <Compile Include="GLTF\Schema\glTFMeshPrimitive.cs" />
-    <Compile Include="GLTF\Schema\glTFNode.cs" />
-    <Compile Include="GLTF\Schema\glTFNodes.cs" />
-    <Compile Include="GLTF\Schema\glTFProperty.cs" />
-    <Compile Include="GLTF\Schema\glTFScene.cs" />
-    <Compile Include="Build\Logger.cs" />
-    <Compile Include="GLTF\GLTFBuilder.cs" />
-    <Compile Include="Properties\StringLib.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StringLib.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <EmbeddedResource Include="Properties\StringLib.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>StringLib.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).0.0" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{4E089540-E5C0-45D9-BB33-3CBA0E4373B5}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>GLTFRevitExport</RootNamespace>
+        <AssemblyName>GLTFRevitExport</AssemblyName>
+        <FileAlignment>512</FileAlignment>
+        <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+        <WarningLevel>4</WarningLevel>
+        <TargetFrameworkProfile />
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('2017'))">
+        <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+        <RevitVersion>2017</RevitVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('2018'))">
+        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        <RevitVersion>2018</RevitVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('2019'))">
+        <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+        <RevitVersion>2019</RevitVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('2020'))">
+        <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+        <RevitVersion>2020</RevitVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('2021'))">
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <RevitVersion>2021</RevitVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2017|x64'">
+        <OutputPath>bin\Debug2017\</OutputPath>
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+        <DefineConstants>TRACE;DEBUG;REVIT2017</DefineConstants>
+        <DebugType>full</DebugType>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2018|x64'">
+        <OutputPath>bin\Debug2018\</OutputPath>
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+        <DefineConstants>TRACE;DEBUG;REVIT2018</DefineConstants>
+        <DebugType>full</DebugType>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2019|x64'">
+        <OutputPath>bin\Debug2019\</OutputPath>
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+        <DefineConstants>TRACE;DEBUG;REVIT2019</DefineConstants>
+        <DebugType>full</DebugType>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2020|x64'">
+        <OutputPath>bin\Debug2020\</OutputPath>
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+        <DefineConstants>TRACE;DEBUG;REVIT2020</DefineConstants>
+        <DebugType>full</DebugType>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2021|x64'">
+        <OutputPath>bin\Debug2021\</OutputPath>
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+        <DefineConstants>TRACE;DEBUG;REVIT2021</DefineConstants>
+        <DebugType>full</DebugType>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2017|x64'">
+        <OutputPath>bin\Release2017\</OutputPath>
+        <Optimize>true</Optimize>
+        <DefineConstants>REVIT2017</DefineConstants>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2018|x64'">
+        <OutputPath>bin\Release2018\</OutputPath>
+        <Optimize>true</Optimize>
+        <DefineConstants>REVIT2018</DefineConstants>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2019|x64'">
+        <OutputPath>bin\Release2019\</OutputPath>
+        <Optimize>true</Optimize>
+        <DefineConstants>REVIT2019</DefineConstants>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2020|x64'">
+        <OutputPath>bin\Release2020\</OutputPath>
+        <Optimize>true</Optimize>
+        <DefineConstants>REVIT2020</DefineConstants>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2021|x64'">
+        <OutputPath>bin\Release2021\</OutputPath>
+        <Optimize>true</Optimize>
+        <DefineConstants>REVIT2021</DefineConstants>
+        <PlatformTarget>x64</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup>
+        <StartupObject />
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Web.Extensions" />
+        <Reference Include="System.Xml" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="System.Xaml">
+            <RequiredTargetFramework>4.0</RequiredTargetFramework>
+        </Reference>
+        <Reference Include="WindowsBase" />
+        <Reference Include="PresentationCore" />
+        <Reference Include="PresentationFramework" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Build\Actions\BaseTypes.cs" />
+        <Compile Include="Build\Actions\_ElementActions\ElementEndAction.cs" />
+        <Compile Include="Build\Actions\_ElementActions\ElementBeginAction.cs" />
+        <Compile Include="Build\Actions\_ElementActions\ElementBoundsAction.cs" />
+        <Compile Include="Build\Actions\_ElementActions\ElementTransformAction.cs" />
+        <Compile Include="Build\Actions\_LinkActions\LinkBeginAction.cs" />
+        <Compile Include="Build\Actions\_LinkActions\LinkBoundsAction.cs" />
+        <Compile Include="Build\Actions\_LinkActions\LinkEndAction.cs" />
+        <Compile Include="Build\Actions\_LinkActions\LinkTransformAction.cs" />
+        <Compile Include="Build\Actions\_PartActions\PartFromDataAction.cs" />
+        <Compile Include="Build\Actions\_PartActions\PartFromElementAction.cs" />
+        <Compile Include="Build\Actions\_SceneActions\SceneBeginAction.cs" />
+        <Compile Include="Build\Actions\_SceneActions\SceneEndAction.cs" />
+        <Compile Include="Build\Actions\GridAction.cs" />
+        <Compile Include="Build\Actions\LevelAction.cs" />
+        <Compile Include="Build\BuildContext.cs" />
+        <Compile Include="Build\Geometry\FacetData.cs" />
+        <Compile Include="Build\Geometry\PartData.cs" />
+        <Compile Include="Build\Geometry\PrimitiveData.cs" />
+        <Compile Include="Build\Geometry\VectorData.cs" />
+        <Compile Include="Export\ExportContext.Data.cs" />
+        <Compile Include="Export\ExportContext.IExportContext.cs" />
+        <Compile Include="Export\ExportContext.cs" />
+        <Compile Include="Export\ExportContext.Utils.cs" />
+        <Compile Include="GLTF.Extensions.BIM.Revit\Attributes.cs" />
+        <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitViewExt.cs" />
+        <Compile Include="Extensions\RevitAPIExtensions.cs" />
+        <Compile Include="Extensions\NumberExtensions.cs" />
+        <Compile Include="Extensions\StringExtensions.cs" />
+        <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitUtils.cs" />
+        <Compile Include="GLTFExportConfigs.cs" />
+        <Compile Include="GLTFExporter.cs" />
+        <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitDocumentEx.cs" />
+        <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitElementExt.cs" />
+        <Compile Include="Build\Logger.cs" />
+        <Compile Include="Properties\StringLib.Designer.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>StringLib.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Properties\AssemblyInfo.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <EmbeddedResource Include="Properties\StringLib.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>StringLib.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <AppDesigner Include="Properties\" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json">
+            <Version>12.0.3</Version>
+        </PackageReference>
+        <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).0.0" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

@@ -6,10 +6,10 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Package;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Package;
-using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.Build;
 using GLTFRevitExport.Build.Actions;
 using GLTFRevitExport.Build.Geometry;

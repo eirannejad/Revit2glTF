@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using GLTFRevitExport.GLTF;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.Build.Geometry;
 using GLTFRevitExport.Build.Actions.BaseTypes;
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
@@ -27,7 +26,7 @@ namespace GLTFRevitExport.Build.Actions {
                         name: element.Name,
                         matrix: null,
                         exts: new glTFExtension[] {
-                            new glTFBIMNodeExtension(element, ctx)
+                            new glTFRevitElementExt(element, ctx)
                         },
                         extras: ctx.Configs.BuildExtras(element)
                         );
@@ -81,7 +80,7 @@ namespace GLTFRevitExport.Build.Actions {
                                 (mat) => {
                                     if (mat.Extensions != null) {
                                         foreach (var ext in mat.Extensions)
-                                            if (ext.Value is glTFBIMMaterialExtension matExt)
+                                            if (ext.Value is glTFRevitElementExt matExt)
                                                 return matExt.Id == material.UniqueId;
                                     }
                                     return false;
@@ -102,7 +101,7 @@ namespace GLTFRevitExport.Build.Actions {
                                 name: material.Name,
                                 color: material.Color.IsValid ? material.Color.ToGLTF() : ctx.Configs.DefaultColor.ToGLTF(),
                                 exts: new glTFExtension[] {
-                                    new glTFBIMMaterialExtension(material, ctx)
+                                    new glTFRevitElementExt(material, ctx)
                                 },
                                 extras: null
                             );

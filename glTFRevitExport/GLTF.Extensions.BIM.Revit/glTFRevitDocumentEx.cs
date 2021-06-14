@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Newtonsoft.Json;
-
 using Autodesk.Revit.DB;
+
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Containers;
 
 using GLTFRevitExport.Build;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Extensions.BIM.BaseTypes;
-using GLTFRevitExport.GLTF.Extensions.BIM.Properties;
 
-namespace GLTFRevitExport.GLTF.Extensions.BIM {
+namespace GLTFRevitExport.GLTF.Extensions.BIM.Revit {
     [Serializable]
-    class glTFBIMAssetExtension : glTFBIMExtension {
-        public glTFBIMAssetExtension(Document d, BuildContext ctx) : base() {
+    class glTFRevitDocumentExt : glTFBIMAssetExtension {
+        public glTFRevitDocumentExt(Document d, BuildContext ctx) : base() {
             App = GetAppName(d);
             Id = GetDocumentId(d).ToString();
             Title = d.Title;
@@ -82,32 +81,5 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM {
             }
             return docProps;
         }
-
-        [JsonProperty("id", Order = 1)]
-        public string Id { get; set; }
-
-        [JsonProperty("application", Order = 2)]
-        public string App { get; set; }
-
-        [JsonProperty("title", Order = 3)]
-        public string Title { get; set; }
-
-        [JsonProperty("source", Order = 4)]
-        public string Source { get; set; }
-
-        [JsonProperty("levels", Order = 5)]
-        public List<uint> Levels { get; set; }
-
-        [JsonProperty("grids", Order = 6)]
-        public List<uint> Grids { get; set; }
-
-        [JsonProperty("bounds", Order = 7)]
-        public glTFBIMBounds Bounds { get; set; }
-
-        [JsonProperty("containers", Order = 8)]
-        public List<glTFBIMPropertyContainer> Containers { get; set; }
-
-        [JsonProperty("properties", Order = 9)]
-        public Dictionary<string, object> Properties { get; set; }
     }
 }

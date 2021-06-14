@@ -3,18 +3,19 @@ using System.Collections.Generic;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
-using GLTFRevitExport.GLTF.Extensions.BIM.Properties;
-using GLTFRevitExport.GLTF.Package;
-using GLTFRevitExport.GLTF.Package.BaseTypes;
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Package;
+using GLTF2BIM.GLTF.Package.BaseTypes;
+using GLTF2BIM.GLTF.Extensions.BIM.Containers;
+
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 namespace GLTFRevitExport.Build {
     class BuildContext {
         public GLTFBuilder Builder { get; }
         public GLTFExportConfigs Configs { get; }
-        public glTFBIMAssetExtension AssetExtension { get; }
+        public glTFRevitDocumentExt AssetExtension { get; }
         public glTFBIMPropertyContainer PropertyContainer { get; }
 
         public BuildContext(string name, Document doc, GLTFExportConfigs cfgs) {
@@ -24,10 +25,10 @@ namespace GLTFRevitExport.Build {
 
             // build asset extension and property source (if needed)
             if (cfgs.EmbedParameters)
-                AssetExtension = new glTFBIMAssetExtension(doc, this);
+                AssetExtension = new glTFRevitDocumentExt(doc, this);
             else {
                 PropertyContainer = new glTFBIMPropertyContainer($"{name}-properties.json");
-                AssetExtension = new glTFBIMAssetExtension(doc, this);
+                AssetExtension = new glTFRevitDocumentExt(doc, this);
             }
 
             Builder.SetAsset(
