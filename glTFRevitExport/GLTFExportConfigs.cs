@@ -61,7 +61,7 @@ namespace GLTFRevitExport {
         /// <summary>
         /// Export all buffers into a single binary file
         /// </summary>
-        public bool UseSingleBinary { get; set; } = true;
+        public bool UseSingleBinary { get; set; } = false;
 
         public ElementFilter Filter { get; set; }
 
