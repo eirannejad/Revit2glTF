@@ -24,9 +24,9 @@ namespace GLTFRevitExport.Properties {
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class StringLib {
         
-        static global::System.Resources.ResourceManager resourceMan;
+        private static global::System.Resources.ResourceManager resourceMan;
         
-        static global::System.Globalization.CultureInfo resourceCulture;
+        private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal StringLib() {
@@ -61,83 +61,11 @@ namespace GLTFRevitExport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Array is not vector3 data.
-        /// </summary>
-        internal static string ArrayIsNotVector3Data {
-            get {
-                return ResourceManager.GetString("ArrayIsNotVector3Data", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to EXT_bim_metadata.
-        /// </summary>
-        internal static string GLTFExtensionName {
-            get {
-                return ResourceManager.GetString("GLTFExtensionName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to GLTFRevitExport.
         /// </summary>
         internal static string GLTFGeneratorName {
             get {
                 return ResourceManager.GetString("GLTFGeneratorName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item does not exist in this listed tree.
-        /// </summary>
-        internal static string ItemNotExist {
-            get {
-                return ResourceManager.GetString("ItemNotExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Node does not exist.
-        /// </summary>
-        internal static string NodeNotExist {
-            get {
-                return ResourceManager.GetString("NodeNotExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are not active nodes in this container.
-        /// </summary>
-        internal static string NoParentNode {
-            get {
-                return ResourceManager.GetString("NoParentNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are no primitives with given index is this node&apos;s mesh.
-        /// </summary>
-        internal static string NoParentPrimitive {
-            get {
-                return ResourceManager.GetString("NoParentPrimitive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are no active scenes in this container.
-        /// </summary>
-        internal static string NoParentScene {
-            get {
-                return ResourceManager.GetString("NoParentScene", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Normals length must match number of vertices.
-        /// </summary>
-        internal static string NormalsMustMatchVertexCount {
-            get {
-                return ResourceManager.GetString("NormalsMustMatchVertexCount", resourceCulture);
             }
         }
         

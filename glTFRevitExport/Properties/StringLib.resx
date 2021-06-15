@@ -117,32 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArrayIsNotVector3Data" xml:space="preserve">
-    <value>Array is not vector3 data</value>
-  </data>
-  <data name="GLTFExtensionName" xml:space="preserve">
-    <value>EXT_bim_metadata</value>
-  </data>
   <data name="GLTFGeneratorName" xml:space="preserve">
     <value>GLTFRevitExport</value>
-  </data>
-  <data name="ItemNotExist" xml:space="preserve">
-    <value>Item does not exist in this listed tree</value>
-  </data>
-  <data name="NodeNotExist" xml:space="preserve">
-    <value>Node does not exist</value>
-  </data>
-  <data name="NoParentNode" xml:space="preserve">
-    <value>There are not active nodes in this container</value>
-  </data>
-  <data name="NoParentPrimitive" xml:space="preserve">
-    <value>There are no primitives with given index is this node's mesh</value>
-  </data>
-  <data name="NoParentScene" xml:space="preserve">
-    <value>There are no active scenes in this container</value>
-  </data>
-  <data name="NormalsMustMatchVertexCount" xml:space="preserve">
-    <value>Normals length must match number of vertices</value>
   </data>
   <data name="NoSupportedView" xml:space="preserve">
     <value>Exporting non-3d views are not supported in this Revit version</value>
