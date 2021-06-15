@@ -40,7 +40,7 @@ namespace GLTFRevitExport.Export {
 
             // combine default filter with build filter
             ElementFilter actionFilter = null;
-            if (_cfgs.Filter != null) {
+            if (filter != null) {
                 actionFilter = new LogicalOrFilter(
                     new List<ElementFilter> {
                         // always include these categories no matter the build filter
@@ -50,7 +50,7 @@ namespace GLTFRevitExport.Export {
                                 BuiltInCategory.OST_Views,
                             }
                         ),
-                        _cfgs.Filter
+                        filter
                     }
                 );
             }

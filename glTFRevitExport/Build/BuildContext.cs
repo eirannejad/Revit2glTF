@@ -44,7 +44,10 @@ namespace GLTFRevitExport.Build {
 
             // pack the glTF data and get the container
             gltfPack.AddRange(
-                Builder.Pack(singleBinary: cfgs.UseSingleBinary)
+                Builder.Pack(new GLTFBuilderOptions {
+                    UseSingleBinary = cfgs.UseSingleBinary,
+                    MaxBinarySize = cfgs.MaxBinarySize
+                })
             );
 
             if (PropertyContainer != null && PropertyContainer.HasPropertyData)
