@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.IO;
 using System.Linq;
 
 using Autodesk.Revit.DB;
-
-using GLTFRevitExport.GLTF;
-using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
-using GLTFRevitExport.Properties;
-using System.Runtime.CompilerServices;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB.Visual;
 using Autodesk.Revit.DB.Architecture;
+
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
+using GLTFRevitExport.Properties;
+using GLTFRevitExport.Extensions;
 
 namespace GLTFRevitExport.Build.Actions.BaseTypes {
     abstract class BaseAction {

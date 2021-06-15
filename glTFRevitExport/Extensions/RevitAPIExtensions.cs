@@ -2,6 +2,8 @@
 
 using Autodesk.Revit.DB;
 
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
+
 namespace GLTFRevitExport.Extensions {
     static class RevitAPIExtensions {
         // Z-Up to Y-Up basis transform
@@ -107,5 +109,22 @@ namespace GLTFRevitExport.Extensions {
 
         public static bool IsBIC(this Category c, BuiltInCategory bic)
             => c.Id.IntegerValue == (int)bic;
+
+
+        public static glTFBIMBounds TOGLTFBounds(this BoundingBoxXYZ bbox) {
+            return new glTFBIMBounds(
+                min: bbox.Min.ToGLTFVector(),
+                max: bbox.Max.ToGLTFVector()
+                );
+        }
+
+        public static glTFBIMVector ToGLTFVector(this XYZ pt) {
+            float[] vector = pt.ToGLTF();
+            return new glTFBIMVector(
+                x: vector[0],
+                y: vector[1],
+                z: vector[2]
+            );
+        }
     }
 }

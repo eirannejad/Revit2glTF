@@ -4,10 +4,10 @@ using System.Linq;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.Build.Actions.BaseTypes;
 using GLTFRevitExport.Properties;
 

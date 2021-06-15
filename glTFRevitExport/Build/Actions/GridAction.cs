@@ -5,10 +5,12 @@ using System.Linq;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
+
+using GLTFRevitExport.Extensions;
 using GLTFRevitExport.Build.Actions.BaseTypes;
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 namespace GLTFRevitExport.Build.Actions {
     class GridAction : BuildBeginAction {
@@ -24,12 +26,12 @@ namespace GLTFRevitExport.Build.Actions {
 
             if (grid.Curve is Line gridLine) {
                 // add gltf-bim extension data
-                var gltfBim = new glTFBIMNodeExtension(grid, ctx);
+                var gltfBim = new glTFRevitElementExt(grid, ctx);
 
                 // grab the two ends of the grid line as grid bounds
                 gltfBim.Bounds = new glTFBIMBounds(
-                    gridLine.GetEndPoint(0),
-                    gridLine.GetEndPoint(1)
+                    gridLine.GetEndPoint(0).ToGLTFVector(),
+                    gridLine.GetEndPoint(1).ToGLTFVector()
                 );
 
                 // create level node

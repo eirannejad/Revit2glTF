@@ -35,7 +35,7 @@
     <RevitVersion>2021</RevitVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2017|x64'">
-    <OutputPath>..\..\..\build\Debug2017\</OutputPath>
+    <OutputPath>bin\Debug2017\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;REVIT2017</DefineConstants>
@@ -45,7 +45,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2018|x64'">
-    <OutputPath>..\..\..\build\Debug2018\</OutputPath>
+    <OutputPath>bin\Debug2018\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;REVIT2018</DefineConstants>
@@ -55,7 +55,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2019|x64'">
-    <OutputPath>..\..\..\build\Debug2019\</OutputPath>
+    <OutputPath>bin\Debug2019\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;REVIT2019</DefineConstants>
@@ -65,7 +65,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2020|x64'">
-    <OutputPath>..\..\..\build\Debug2020\</OutputPath>
+    <OutputPath>bin\Debug2020\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;REVIT2020</DefineConstants>
@@ -75,7 +75,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2021|x64'">
-    <OutputPath>..\..\..\build\Debug2021\</OutputPath>
+    <OutputPath>bin\Debug2021\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;REVIT2021</DefineConstants>
@@ -169,53 +169,17 @@
     <Compile Include="Export\ExportContext.IExportContext.cs" />
     <Compile Include="Export\ExportContext.cs" />
     <Compile Include="Export\ExportContext.Utils.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\Attributes.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMContainer.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMBounds.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMNodeExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMMaterialExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\Properties\glTFBIMPropertyContainer.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMSceneExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMVector.cs" />
-    <Compile Include="GLTF.Extensions.BIM\Properties\glTFBIMPropertyDataGroup.cs" />
-    <Compile Include="GLTF.Extensions.BIM\Properties\glTFPropertyData.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferScalar1Segment.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferScalar2Segment.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferScalar4Segment.cs" />
-    <Compile Include="GLTF\BufferSegments\BaseTypes.cs" />
-    <Compile Include="GLTF\BufferSegments\BufferVectorSegment.cs" />
-    <Compile Include="GLTF\GLTFBuilder.Data.cs" />
-    <Compile Include="GLTF\GLTFBuilder.Utils.cs" />
-    <Compile Include="GLTF\Package\GLTFPackageBinaryItem.cs" />
-    <Compile Include="GLTF\Package\BaseTypes.cs" />
+    <Compile Include="GLTF.Extensions.BIM.Revit\Attributes.cs" />
+    <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitViewExt.cs" />
     <Compile Include="Extensions\RevitAPIExtensions.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitUtils.cs" />
     <Compile Include="GLTFExportConfigs.cs" />
     <Compile Include="GLTFExporter.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\glTFBIMAssetExtension.cs" />
-    <Compile Include="GLTF.Extensions.BIM\BaseTypes\glTFBIMPropertyExtension.cs" />
-    <Compile Include="GLTF\Package\GLTFPackageJsonItem.cs" />
-    <Compile Include="GLTF\Package\GLTFPackageModelItem.cs" />
-    <Compile Include="GLTF\Schema\glTF.cs" />
-    <Compile Include="GLTF\Schema\glTFAccessor.cs" />
-    <Compile Include="GLTF\Schema\glTFAsset.cs" />
-    <Compile Include="GLTF\Schema\glTFAttributes.cs" />
-    <Compile Include="GLTF\Schema\glTFBuffer.cs" />
-    <Compile Include="GLTF\Schema\glTFBufferView.cs" />
-    <Compile Include="GLTF\Schema\glTFConstants.cs" />
-    <Compile Include="GLTF\Schema\glTFExtension.cs" />
-    <Compile Include="GLTF\Schema\glTFExtras.cs" />
-    <Compile Include="GLTF\Schema\glTFMaterial.cs" />
-    <Compile Include="GLTF\Schema\glTFMesh.cs" />
-    <Compile Include="GLTF\Schema\glTFMeshPrimitive.cs" />
-    <Compile Include="GLTF\Schema\glTFNode.cs" />
-    <Compile Include="GLTF\Schema\glTFNodes.cs" />
-    <Compile Include="GLTF\Schema\glTFProperty.cs" />
-    <Compile Include="GLTF\Schema\glTFScene.cs" />
+    <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitDocumentEx.cs" />
+    <Compile Include="GLTF.Extensions.BIM.Revit\glTFRevitElementExt.cs" />
     <Compile Include="Build\Logger.cs" />
-    <Compile Include="GLTF\GLTFBuilder.cs" />
     <Compile Include="Properties\StringLib.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -233,13 +197,15 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Argyle.Newtonsoft.Json\Src\Newtonsoft.Json\Newtonsoft.Json.csproj">
-      <Project>{0e806b3a-ae73-40c6-9501-c853d9b4f853}</Project>
-      <Name>Newtonsoft.Json</Name>
-      <Private>True</Private>
+    <ProjectReference Include="..\lib\glTF2BIM\GLTF2BIM\GLTF2BIM.csproj">
+      <Project>{a3838e64-eb23-4ffb-acec-0f1f0244fa53}</Project>
+      <Name>GLTF2BIM</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,11 +2,12 @@
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF;
+using GLTF2BIM.GLTF;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Extensions;
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Extensions.BIM;
 using GLTFRevitExport.Build.Actions.BaseTypes;
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 namespace GLTFRevitExport.Build.Actions {
     class ElementBeginAction : BuildBeginAction {
@@ -45,7 +46,7 @@ namespace GLTFRevitExport.Build.Actions {
                 }
                 // otherwise create and open a new node for this type
                 else {
-                    var bimExt = new glTFBIMNodeExtension(_elementType, ctx);
+                    var bimExt = new glTFRevitElementExt(_elementType, ctx);
 
                     ctx.Builder.OpenNode(
                         name: _elementType.Name,
@@ -67,7 +68,7 @@ namespace GLTFRevitExport.Build.Actions {
             }
             // otherwise create and open a new node for this type
             else {
-                var bimExt = new glTFBIMNodeExtension(element, ctx) {
+                var bimExt = new glTFRevitElementExt(element, ctx) {
                     Uri = Uri
                 };
 

@@ -6,12 +6,13 @@ using System.Linq;
 
 using Autodesk.Revit.DB;
 
-using GLTFRevitExport.GLTF.Schema;
-using GLTFRevitExport.GLTF.Package.BaseTypes;
-using GLTFRevitExport.GLTF.Extensions.BIM;
+using GLTF2BIM.GLTF.Schema;
+using GLTF2BIM.GLTF.Package.BaseTypes;
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.Build;
 using GLTFRevitExport.Build.Actions;
 using GLTFRevitExport.Build.Actions.BaseTypes;
+using GLTFRevitExport.GLTF.Extensions.BIM.Revit;
 
 namespace GLTFRevitExport.Export {
 #if REVIT2019
@@ -151,7 +152,7 @@ namespace GLTFRevitExport.Export {
                         activeLinkCtx.Builder.OpenScene(
                             name: "default",
                             exts: new glTFExtension[] {
-                                new glTFBIMSceneExtension()
+                                new glTFRevitViewExt()
                             },
                             extras: null
                             );
@@ -160,7 +161,7 @@ namespace GLTFRevitExport.Export {
                             name: "default",
                             matrix: null,
                             exts: new glTFExtension[] {
-                                new glTFBIMNodeExtension()
+                                new glTFRevitElementExt()
                             },
                             extras: null);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Autodesk.Revit.DB;
 
+using GLTF2BIM.GLTF.Extensions.BIM.Schema;
 using GLTFRevitExport.GLTF.Extensions.BIM;
 
 namespace GLTFRevitExport.Build.Actions {
