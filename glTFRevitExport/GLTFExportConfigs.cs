@@ -63,7 +63,10 @@ namespace GLTFRevitExport {
         /// </summary>
         public bool UseSingleBinary { get; set; } = false;
 
-        public ElementFilter Filter { get; set; }
+        /// <summary>
+        /// Maximum binary size, default 100MB
+        /// </summary>
+        public int MaxBinarySize { get; set; } = 100 * 1024 * 1024;
 
         public delegate glTFExtras GLTFExtrasBuilder(object node);
         public GLTFExtrasBuilder ExtrasBuilder;
