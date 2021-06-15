@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 
 using GLTF2BIM.GLTF.Package.BaseTypes;
 using GLTFRevitExport.Export;
+using GLTFRevitExport.Properties;
 
 namespace GLTFRevitExport {
     public class GLTFExporter {
