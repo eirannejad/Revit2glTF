@@ -197,12 +197,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
     <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Argyle.Newtonsoft.Json\Src\Newtonsoft.Json\Newtonsoft.Json.csproj">
+      <Project>{0e806b3a-ae73-40c6-9501-c853d9b4f853}</Project>
+      <Name>Newtonsoft.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\lib\glTF2BIM\GLTF2BIM\GLTF2BIM.csproj">
       <Project>{a3838e64-eb23-4ffb-acec-0f1f0244fa53}</Project>
       <Name>GLTF2BIM</Name>
