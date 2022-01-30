@@ -77,12 +77,19 @@ namespace GLTFRevitExport.Extensions {
 
         public static double ToGLTF(this Parameter p, double value) {
             // TODO: read value unit and convert correctly
+#if REVIT2022
+            string typeId = p.Definition.GetDataType().TypeId;
+            if (typeId.StartsWith("autodesk.spec.aec:length"))
+                return value.ToGLTFLength();
+            return value;
+#else
             switch (p.Definition.UnitType) {
                 case UnitType.UT_Length:
                     return value.ToGLTFLength();
                 default:
                     return value;
             }
+#endif
         }
 
         public static object ToGLTF(this Parameter param) {
@@ -93,7 +100,11 @@ namespace GLTFRevitExport.Extensions {
                     return param.AsString();
 
                 case StorageType.Integer:
+#if REVIT2022
+                    if (param.Definition.GetDataType().TypeId.StartsWith("autodesk.spec:spec.bool"))
+#else
                     if (param.Definition.ParameterType == ParameterType.YesNo)
+#endif
                         return param.AsInteger() != 0;
                     else
                         return param.AsInteger();
