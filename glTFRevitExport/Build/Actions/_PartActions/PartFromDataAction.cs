@@ -18,42 +18,47 @@ namespace GLTFRevitExport.Build.Actions {
 
         public PartFromDataAction(PartData partData) => _partData = partData;
 
-        public override void Execute(BuildContext ctx) {
-            Logger.Log("> primitive");
+        public override void Execute(BuildContext ctx)
+        {
+            if (_partData.HasPartData)
+            {
+                Logger.Log("> primitive");
 
-            // make a new mesh and assign the new material
-            var vertices = new List<float>();
-            foreach (var vec in _partData.Primitive.Vertices)
-                vertices.AddRange(vec.ToArray());
+                // make a new mesh and assign the new material
+                var vertices = new List<float>();
+                foreach (var vec in _partData.Primitive.Vertices)
+                    vertices.AddRange(vec.ToArray());
 
-            var faces = new List<uint>();
-            foreach (var facet in _partData.Primitive.Faces)
-                faces.AddRange(facet.ToArray());
+                var faces = new List<uint>();
+                foreach (var facet in _partData.Primitive.Faces)
+                    faces.AddRange(facet.ToArray());
 
-            var primIndex = ctx.Builder.AddPrimitive(
-                vertices: vertices.ToArray(),
-                normals: null,
-                faces: faces.ToArray()
-                );
+                var primIndex = ctx.Builder.AddPrimitive(
+                    vertices: vertices.ToArray(),
+                    normals: null,
+                    faces: faces.ToArray()
+                    );
 
-            Logger.Log("> material");
+                Logger.Log("> material");
 
-            // if we are not exporting materials, use the default color
-            if (!ctx.Configs.ExportMaterials)
-                UpdatePrimitiveMaterialByColor(ctx.Builder, primIndex, ctx.Configs.DefaultColor, 0.0d);
+                // if we are not exporting materials, use the default color
+                if (!ctx.Configs.ExportMaterials)
+                    UpdatePrimitiveMaterialByColor(ctx.Builder, primIndex, ctx.Configs.DefaultColor, 0.0d);
 
-            // if material information is not provided, make a material
-            // based on color and transparency
-            else if (_partData.Material is null) {
-                // make sure color is valid, otherwise it will throw
-                // exception that color is not initialized
-                Color color = _partData.Color.IsValid ? _partData.Color : ctx.Configs.DefaultColor;
-                UpdatePrimitiveMaterialByColor(ctx.Builder, primIndex, color, _partData.Transparency);
+                // if material information is not provided, make a material
+                // based on color and transparency
+                else if (_partData.Material is null)
+                {
+                    // make sure color is valid, otherwise it will throw
+                    // exception that color is not initialized
+                    Color color = _partData.Color.IsValid ? _partData.Color : ctx.Configs.DefaultColor;
+                    UpdatePrimitiveMaterialByColor(ctx.Builder, primIndex, color, _partData.Transparency);
+                }
+
+                // otherwise process the new material
+                else
+                    UpdatePrimitiveMaterialByMaterial(ctx.Builder, primIndex, _partData.Material, ctx);
             }
-
-            // otherwise process the new material
-            else
-                UpdatePrimitiveMaterialByMaterial(ctx.Builder, primIndex, _partData.Material, ctx);
         }
 
         void UpdatePrimitiveMaterialByColor(GLTFBuilder gltf, uint primIndex, Color color, double transparency) {

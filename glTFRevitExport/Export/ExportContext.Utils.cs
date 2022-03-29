@@ -45,18 +45,24 @@ namespace GLTFRevitExport.Export {
                 minx = miny = minz = maxx = maxy = maxz = float.NaN;
 
                 foreach (var partData in _partStack)
-                    foreach (var vertex in partData.Primitive.Vertices) {
-                        var vtx = vertex;
-                        if (xform is Transform)
-                            vtx = vtx.Transform(xform);
+                {
+                    if (partData.HasPartData)
+                    {
+                        foreach (var vertex in partData.Primitive.Vertices)
+                        {
+                            var vtx = vertex;
+                            if (xform is Transform)
+                                vtx = vtx.Transform(xform);
 
-                        minx = minx is float.NaN || vtx.X < minx ? vtx.X : minx;
-                        miny = miny is float.NaN || vtx.Y < miny ? vtx.Y : miny;
-                        minz = minz is float.NaN || vtx.Z < minz ? vtx.Z : minz;
-                        maxx = maxx is float.NaN || vtx.X > maxx ? vtx.X : maxx;
-                        maxy = maxy is float.NaN || vtx.Y > maxy ? vtx.Y : maxy;
-                        maxz = maxz is float.NaN || vtx.Z > maxz ? vtx.Z : maxz;
+                            minx = minx is float.NaN || vtx.X < minx ? vtx.X : minx;
+                            miny = miny is float.NaN || vtx.Y < miny ? vtx.Y : miny;
+                            minz = minz is float.NaN || vtx.Z < minz ? vtx.Z : minz;
+                            maxx = maxx is float.NaN || vtx.X > maxx ? vtx.X : maxx;
+                            maxy = maxy is float.NaN || vtx.Y > maxy ? vtx.Y : maxy;
+                            maxz = maxz is float.NaN || vtx.Z > maxz ? vtx.Z : maxz;
+                        }
                     }
+                }
 
                 return new glTFBIMBounds(
                     minx, miny, minz,
@@ -96,11 +102,18 @@ namespace GLTFRevitExport.Export {
             List<float> vz = new List<float>();
 
             foreach (var partData in _partStack)
-                foreach (var vtx in partData.Primitive.Vertices) {
-                    vx.Add(vtx.X);
-                    vy.Add(vtx.Y);
-                    vz.Add(vtx.Z);
+            {
+                if (partData.HasPartData)
+                {
+                    foreach (var vtx in partData.Primitive.Vertices)
+                    {
+                        vx.Add(vtx.X);
+                        vy.Add(vtx.Y);
+                        vz.Add(vtx.Z);
+                    }
                 }
+
+            }
 
             var min = new VectorData(vx.Min(), vy.Min(), vz.Min());
             var max = new VectorData(vx.Max(), vy.Max(), vz.Max());
@@ -108,11 +121,17 @@ namespace GLTFRevitExport.Export {
             var translate = new VectorData(0, 0, 0) - anchor;
 
             foreach (var partData in _partStack)
-                foreach (var vtx in partData.Primitive.Vertices) {
-                    vtx.X += translate.X;
-                    vtx.Y += translate.Y;
-                    vtx.Z += translate.Z;
+            {
+                if (partData.HasPartData)
+                {
+                    foreach (var vtx in partData.Primitive.Vertices)
+                    {
+                        vtx.X += translate.X;
+                        vtx.Y += translate.Y;
+                        vtx.Z += translate.Z;
+                    }
                 }
+            }
 
             return new float[16] {
                 1f,             0f,             0f,             0f,

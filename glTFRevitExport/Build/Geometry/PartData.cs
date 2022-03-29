@@ -10,6 +10,8 @@ namespace GLTFRevitExport.Build.Geometry {
         public Color Color;
         public double Transparency;
 
+        public bool HasPartData => Primitive != null;
+
         public static PartData operator +(PartData left, PartData right) {
             PrimitiveData prim;
             if (left.Primitive is null)

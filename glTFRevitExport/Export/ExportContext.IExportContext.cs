@@ -421,10 +421,10 @@ namespace GLTFRevitExport.Export {
 
                 var newPrim = new PrimitiveData(vertices, faces);
 
-                if (activePart.Primitive is null)
-                    activePart.Primitive = newPrim;
-                else
+                if (activePart.HasPartData)
                     activePart.Primitive += newPrim;
+                else
+                    activePart.Primitive = newPrim;
             }
         }
 
