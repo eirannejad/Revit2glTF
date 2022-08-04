@@ -67,15 +67,15 @@ namespace GLTFRevitExport.GLTF.Extensions.BIM.Revit {
                     var param = pinfo.get_Parameter(paramId);
                     if (param != null) {
                         var paramValue = param.ToGLTF();
-                        if (paramValue != null)
+                        if (paramValue != null && !docProps.ContainsKey(param.Definition.Name))
                             docProps.Add(param.Definition.Name, paramValue);
-                    }
+                    }                
                 }
 
                 foreach (Parameter param in pinfo.Parameters)
                     if (param.Id.IntegerValue > 0) {
                         var paramValue = param.ToGLTF();
-                        if (paramValue != null)
+                        if (paramValue != null && !docProps.ContainsKey(param.Definition.Name))
                             docProps.Add(param.Definition.Name, paramValue);
                     }
             }
